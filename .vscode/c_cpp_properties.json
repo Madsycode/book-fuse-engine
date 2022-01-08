@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {            
+            "name": "configs",            
+            "includePath": [
+                "${workspaceFolder}/dependencies/includes/**",
+                "${workspaceFolder}/engine/src/**"
+            ],
+            "defines": ["_DEBUG", "FUSE_EXPORT"],            
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "${default}"
+        }
+    ],
+    "version": 4
+}

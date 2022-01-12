@@ -1,0 +1,20 @@
+{
+  "files.associations": {
+    "array": "cpp",
+    "chrono": "cpp",
+    "compare": "cpp",
+    "filesystem": "cpp",
+    "functional": "cpp",
+    "memory": "cpp",
+    "ratio": "cpp",
+    "tuple": "cpp",
+    "type_traits": "cpp",
+    "utility": "cpp",
+    "xmemory": "cpp",
+    "xstring": "cpp",
+    "xtr1common": "cpp",
+    "xutility": "cpp",
+    "algorithm": "cpp",
+    "locale": "cpp"
+  }
+}

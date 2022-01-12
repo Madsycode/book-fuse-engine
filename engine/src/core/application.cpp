@@ -2,17 +2,13 @@
 #include "inputs.h"
 #include "application.h"
 #include "events/system.h"
+#include "scene/scene_instance.h"
 
 namespace fuse {
   static bool is_running = true;
 
   bool on_quit(const quit_event&) { 
     is_running = false; 
-    return true;
-  }
-
-  bool on_resized(const resized_event& e) { 
-    FUSE_INFO("window resized %d %d", e.width, e.height)
     return true;
   }
 
@@ -43,11 +39,15 @@ namespace fuse {
 
     // register callbacks
     auto disp = inputs::get_dispatcher();
-    disp->add_callback<resized_event>(on_resized);
     disp->add_callback<quit_event>(on_quit);
+
+    // create scene
+    auto scene = new scene_instance(renderer, disp);
+    scene->start();
 
     while (is_running) { 
       inputs::process_sdl_inputs(); 
+      scene->update(0);
     }
 
     SDL_DestroyRenderer(renderer);

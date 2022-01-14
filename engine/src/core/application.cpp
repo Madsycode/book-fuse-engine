@@ -46,8 +46,10 @@ namespace fuse {
     scene->start();
 
     while (is_running) { 
-      inputs::process_events(); 
-      scene->update(0);
+      inputs::process_events();  
+      SDL_RenderClear(renderer);     
+      scene->update(0);  
+      SDL_RenderPresent(renderer);
     }
 
     SDL_DestroyRenderer(renderer);

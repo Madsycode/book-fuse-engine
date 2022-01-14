@@ -83,8 +83,8 @@
 { return this->f(std::forward<decltype(args)>(args)...); }
 
 // window size
-#define SCREEN_WIDTH 420
-#define SCREEN_HEIGHT 50
+#define SCREEN_WIDTH 1080
+#define SCREEN_HEIGHT 720
 
 // universal unique id (uuid)
 namespace fuse {

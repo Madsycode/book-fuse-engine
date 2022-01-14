@@ -1,12 +1,12 @@
 #pragma once
-#include "ecs/systems/test_system.h"
-#include "assets/asset_registry.h"
+#include "ecs/systems/sprite_renderer_system.h"
+#include "ecs/systems/text_renderer_system.h"
 
 namespace fuse {
   struct scene_instance {
     FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _dispatcher(dp) {
-      // register systems
-      this->register_system<ecs::test_system>();
+      this->register_system<ecs::sprite_renderer_system>();
+      this->register_system<ecs::text_renderer_system>();
     }
 
     FUSE_INLINE ~scene_instance() {
@@ -16,23 +16,17 @@ namespace fuse {
     }
 
     FUSE_INLINE void update(float dt) {
+      SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);      
       for (auto& sys : _systems) { sys->update(dt); }
-      _registry.refresh();
+      this->_registry.refresh();      
     }
 
     FUSE_INLINE void start() {
-      auto entity = _registry.add_entity();
+      auto font = _assets.load_font("resource/roboto.ttf", "roboto", 30);
+
+      ecs::entity_id entity = _registry.add_entity();
       _registry.add_component<ecs::transform_component>(entity);
-
-      auto sprite = _assets.load_texture("resource/sprite.png", "sprite", _renderer);
-      auto font = _assets.load_font("resource/roboto.ttf", "myfont", 16);
-      auto audio = _assets.load_audio("resource/song.mp3", "mysong", 50);
-
-      auto tilemap = _assets.add<tilemap_asset>("resource/tilemap.a", "jungle");
-      auto animation = _assets.add<animation_asset>("resource/run.a", "run");
-
-      auto id = _assets.get_id<texture_asset>("sprite"); 
-      auto tx = _assets.get<texture_asset>(id);
+      _registry.add_component<ecs::text_component>(entity, font->id, "This is a text!");
     }
 
     template <typename T>

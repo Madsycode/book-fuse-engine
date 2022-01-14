@@ -19,7 +19,7 @@ namespace fuse::inputs {
     dispatcher* get_dispatcher() { return &dispatchr; }
     bool is_down(int button) { return mouse.buttons.test(button); }
 
-    void process_sdl_inputs() {
+    void process_events() {
       static SDL_Event event;
 
       while (SDL_PollEvent(&event)) {

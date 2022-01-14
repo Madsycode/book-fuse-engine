@@ -9,6 +9,6 @@ namespace fuse::inputs {
     FUSE_API bool is_pressed(int key);
     FUSE_API bool is_down(int button);
 
-    FUSE_API void process_sdl_inputs();
     FUSE_API dispatcher* get_dispatcher();
+    FUSE_API void process_events();
 }

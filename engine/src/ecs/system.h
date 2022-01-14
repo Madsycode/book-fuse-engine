@@ -1,15 +1,17 @@
 #pragma once
+#include "assets/asset_registry.h"
 #include "core/dispatcher.h"
 #include "ecs/registry.h"
 
 namespace fuse::ecs {
-  struct system_instance {
-    FUSE_INLINE virtual ~system_instance() = default;
+  struct system {
+    FUSE_INLINE virtual ~system() = default;
 
-    FUSE_INLINE void prepare(dispatcher* dp, registry* rg, SDL_Renderer *rd) {
+    FUSE_INLINE void prepare(dispatcher* dp, registry* rg, SDL_Renderer *rd, asset_registry* as) {
       this->_dispatcher = dp;
       this->_registry = rg;
       this->_renderer = rd;
+      this->_assets = as;
       this->init();
     }
 
@@ -19,9 +21,10 @@ namespace fuse::ecs {
 
   protected:
     SDL_Renderer* _renderer = NULL;
+    asset_registry* _assets = NULL;
     dispatcher* _dispatcher = NULL;    
     registry* _registry = NULL;
   };
 
-  using system_list = std::vector<ecs::system_instance *>;
+  using system_list = std::vector<ecs::system*>;
 }

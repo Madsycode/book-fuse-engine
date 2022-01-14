@@ -1,10 +1,10 @@
 #pragma once
+#include "ecs/system.h"
 #include "ecs/registry.h"
-#include "system_instance.h"
 #include "ecs/components/common.h"
 
 namespace fuse::ecs {
-  struct test_system : system_instance {
+  struct test_system : system {
     FUSE_INLINE test_system() = default;
 
     FUSE_INLINE void update(float dt) {

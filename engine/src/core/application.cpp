@@ -46,7 +46,7 @@ namespace fuse {
     scene->start();
 
     while (is_running) { 
-      inputs::process_sdl_inputs(); 
+      inputs::process_events(); 
       scene->update(0);
     }
 

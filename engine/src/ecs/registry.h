@@ -4,10 +4,10 @@
 
 namespace fuse::ecs {
   struct registry {
-    FUSE_INLINE ~registry() {
-      _destroyed_entities.clear();
+    FUSE_INLINE void clear() {
       _components.clear();
       _signatures.clear();
+      _destroyed_entities.clear();
     }
 
     FUSE_INLINE void refresh() {
@@ -21,10 +21,10 @@ namespace fuse::ecs {
     }
 
     FUSE_INLINE entity_id add_entity() {
-      static entity_id _next_entityid = INVALID_ID;
-      _next_entityid++;
-      _signatures[_next_entityid] = signature();
-      return _next_entityid;
+      static entity_id _nextid = INVALID_ID;
+      _nextid++;
+      _signatures[_nextid] = signature();
+      return _nextid;
     }
 
     FUSE_INLINE void destroy_entity(entity_id entity) {
@@ -32,19 +32,6 @@ namespace fuse::ecs {
     }
 
     // ++
-
-    FUSE_INLINE void view(entity_list &list, const signature &sig) {
-      for (auto &[entity, signature] : _signatures) {
-        bool has_signature = true;
-        for (auto &type : sig) {
-          if (!signature.count(type)) {
-            has_signature = false;
-            break;
-          }
-        }
-        if (has_signature) { list.insert(entity); }
-      }
-    }
 
     template <typename T>
     FUSE_INLINE entity_list view() {
@@ -58,34 +45,26 @@ namespace fuse::ecs {
       return list;
     }
 
-    FUSE_INLINE const entity_list& entities() {
-      static entity_list entities;
-      entities.clear();
-      for (auto &[entity,_] : _signatures) {
-        entities.insert(entity);
-      }
-      return entities;
-    }
-
     // ++  
 
     template <typename T>
     FUSE_INLINE T &get_component(entity_id entity) {
       FUSE_ASSERT(_signatures.count(entity) && "out of range!");
-      return find_component_array<T>()->get(entity);
+      return get_component_array<T>()->get(entity);
     }
 
     template <typename T, typename... Args>
-    FUSE_INLINE T &add_component(entity_id entity, Args &&...args) {
+    FUSE_INLINE T &add_component(entity_id entity, Args&&...args) {
       FUSE_ASSERT(_signatures.count(entity) && "out of range!");
+      auto data = T(std::forward<Args>(args)...);
       _signatures[entity].insert(get_typeid<T>());
-      return find_component_array<T>()->push(entity, T(std::forward<Args>(args)...));
+      return get_component_array<T>()->push(entity, data);
     }
 
     template <typename T>
     FUSE_INLINE void remove_component(entity_id entity) {
       if (has_component<T>(entity)) {
-        find_component_array<T>()->erase(entity);
+        get_component_array<T>()->erase(entity);
         _signatures.at(entity).erase(get_typeid<T>());
       }
     }
@@ -98,17 +77,14 @@ namespace fuse::ecs {
     // ++
 
     template <typename T>
-    FUSE_INLINE void register_component() {
-      type_id _typeid = get_typeid<T>();
-      FUSE_ASSERT(!_components.count(_typeid) && "allready register!");
-      _components.insert({_typeid, new component_array<T>()});
-    }
-
-    template <typename T>
-    FUSE_INLINE component_array<T>* find_component_array() {
-      type_id _typeid = get_typeid<T>();
-      FUSE_ASSERT(_components.count(_typeid) && "array not found!");
-      return static_cast<component_array<T> *>(_components.at(_typeid));
+    FUSE_INLINE component_array<T>* get_component_array() {
+      const type_id type = get_typeid<T>();
+      if(_components.count(type)) {
+        return static_cast<component_array<T>*>(_components.at(type));
+      }
+      auto array = new component_array<T>();
+      _components[get_typeid<T>()] = array;
+      return array;
     }
 
   private:

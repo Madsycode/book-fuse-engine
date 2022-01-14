@@ -2,10 +2,10 @@
 
 #include "font.h"
 #include "audio.h"
-#include "typeid.h"
 #include "tilemap.h"
 #include "texture.h"
 #include "animation.h"
+#include "core/typeid.h"
 
 namespace fuse {
   struct asset_registry {
@@ -103,7 +103,7 @@ namespace fuse {
       tx.data = IMG_LoadTexture(target, path.c_str());
 
       if (!tx.data) {
-        FUSE_ERROR("%s", path.c_str(), IMG_GetError());
+        FUSE_ERROR("%s", IMG_GetError());
         return NULL;
       }
       

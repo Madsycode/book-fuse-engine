@@ -1,12 +1,14 @@
 #pragma once
 #include "ecs/systems/sprite_renderer_system.h"
 #include "ecs/systems/text_renderer_system.h"
+#include "ecs/systems/animation_system.h"
 
 namespace fuse {
   struct scene_instance {
     FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _dispatcher(dp) {
-      this->register_system<ecs::sprite_renderer_system>();
-      this->register_system<ecs::text_renderer_system>();
+      register_system<ecs::sprite_renderer_system>();
+      register_system<ecs::animation_system>();
+      register_system<ecs::text_renderer_system>();
     }
 
     FUSE_INLINE ~scene_instance() {
@@ -22,11 +24,19 @@ namespace fuse {
     }
 
     FUSE_INLINE void start() {
-      auto font = _assets.load_font("resource/roboto.ttf", "roboto", 30);
+      auto f1 = _assets.load_texture("resource/f1.png", "f1", _renderer);
+      auto f2 = _assets.load_texture("resource/f2.png", "f2", _renderer);
+      auto f3 = _assets.load_texture("resource/f3.png", "f3", _renderer);
+
+      auto asset = _assets.add<animation_asset>("path", "name");
+      asset->animation.frames.push_back(f1->id);
+      asset->animation.frames.push_back(f2->id);
+      asset->animation.frames.push_back(f3->id);
+      asset->animation.frame_count = 3;
 
       ecs::entity_id entity = _registry.add_entity();
       _registry.add_component<ecs::transform_component>(entity);
-      _registry.add_component<ecs::text_component>(entity, font->id, "This is a text!");
+      _registry.add_component<ecs::animation_component>(entity, asset->id);
     }
 
     template <typename T>

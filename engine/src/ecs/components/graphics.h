@@ -18,4 +18,11 @@ namespace fuse::ecs {
     asset_id font = INVALID_ID;
     std::string text;
   };
+
+  struct animation_component {
+    FUSE_INLINE animation_component(const animation_component &) = default;
+    FUSE_INLINE animation_component(asset_id id) : animation(id) {}
+    FUSE_INLINE animation_component() = default;
+    asset_id animation = INVALID_ID;
+  };
 }

@@ -36,10 +36,8 @@ namespace fuse::ecs {
         };
 
         // render texture
-        SDL_SetRenderDrawColor(_renderer, tx.color.r, tx.color.g, tx.color.b, tx.color.a);
         SDL_RenderCopyEx(_renderer, texture, NULL, &dst_rect, tr.rotation, NULL, SDL_FLIP_NONE);
         SDL_DestroyTexture(texture);
-        SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
       }
     }
   };

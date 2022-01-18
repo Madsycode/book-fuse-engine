@@ -5,7 +5,7 @@
 namespace fuse {
   struct tilemap_instance {
     std::set<asset_id> tilesets;
-    int column_count = 0;
+    int col_count = 0;
     int row_count = 0;
     int tilesize = 0;
   };

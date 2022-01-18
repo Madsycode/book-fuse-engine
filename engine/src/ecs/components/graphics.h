@@ -25,4 +25,21 @@ namespace fuse::ecs {
     FUSE_INLINE animation_component() = default;
     asset_id animation = INVALID_ID;
   };
+
+  struct tilemap_component {
+    FUSE_INLINE tilemap_component(const tilemap_component &) = default;
+    FUSE_INLINE tilemap_component(asset_id id) : tilemap(id) {}
+    FUSE_INLINE tilemap_component() = default;
+    asset_id tilemap = INVALID_ID;
+  };
+
+  struct tile_component {
+    FUSE_INLINE tile_component(const tile_component&) = default;
+    FUSE_INLINE tile_component() = default;
+
+    asset_id tilemap = INVALID_ID;
+    asset_id tileset = INVALID_ID;
+    int row, col = 0;
+    int x, y = 0;
+  };
 }

@@ -1,15 +1,17 @@
 #pragma once
+#include "ecs/systems/tilemap_renderer_system.h"
 #include "ecs/systems/sprite_renderer_system.h"
 #include "ecs/systems/text_renderer_system.h"
 #include "ecs/systems/animation_system.h"
 
 namespace fuse {
   struct scene_instance {
-    FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _dispatcher(dp) {
-      register_system<ecs::sprite_renderer_system>();
-      register_system<ecs::animation_system>();
-      register_system<ecs::text_renderer_system>();
-    }
+FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _dispatcher(dp) {
+  register_system<ecs::tilemap_renderer_system>();
+  register_system<ecs::sprite_renderer_system>();
+  register_system<ecs::animation_system>();
+  register_system<ecs::text_renderer_system>();
+}
 
     FUSE_INLINE ~scene_instance() {
       _registry.clear();
@@ -23,21 +25,31 @@ namespace fuse {
       this->_registry.refresh();      
     }
 
-    FUSE_INLINE void start() {
-      auto f1 = _assets.load_texture("resource/f1.png", "f1", _renderer);
-      auto f2 = _assets.load_texture("resource/f2.png", "f2", _renderer);
-      auto f3 = _assets.load_texture("resource/f3.png", "f3", _renderer);
+FUSE_INLINE void start() {
+  auto tileset = _assets.load_texture("resource/ts.jpg", "ts", _renderer);
+  auto asset = _assets.add<tilemap_asset>("path", "name");
+  asset->tilemap.tilesets.insert(tileset->id);
+  asset->tilemap.col_count = 16;
+  asset->tilemap.row_count = 8;
+  asset->tilemap.tilesize = 64;
 
-      auto asset = _assets.add<animation_asset>("path", "name");
-      asset->animation.frames.push_back(f1->id);
-      asset->animation.frames.push_back(f2->id);
-      asset->animation.frames.push_back(f3->id);
-      asset->animation.frame_count = 3;
+  ecs::entity_id entity = _registry.add_entity();
+  _registry.add_component<ecs::transform_component>(entity);
+  _registry.add_component<ecs::tilemap_component>(entity, asset->id);
 
-      ecs::entity_id entity = _registry.add_entity();
-      _registry.add_component<ecs::transform_component>(entity);
-      _registry.add_component<ecs::animation_component>(entity, asset->id);
+  for (int col = 0; col < asset->tilemap.col_count; col++) {
+    for (int row = 0; row <  asset->tilemap.row_count; row++) {
+      auto tile_entity = _registry.add_entity();
+      auto& tile = _registry.add_component<ecs::tile_component>(tile_entity);
+      tile.tileset = tileset->id;
+      tile.tilemap = asset->id;
+      tile.row = col;
+      tile.col = row;
+      tile.x = col;
+      tile.y = row;
     }
+  }
+}
 
     template <typename T>
     FUSE_INLINE void register_system() {

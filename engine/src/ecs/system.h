@@ -1,5 +1,6 @@
 #pragma once
 #include "ecs/components/graphics.h"
+#include "ecs/components/physics.h"
 #include "ecs/components/common.h"
 
 #include "assets/asset_registry.h"

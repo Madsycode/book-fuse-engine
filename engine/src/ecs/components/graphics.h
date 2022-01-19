@@ -3,7 +3,7 @@
 
 namespace fuse::ecs {
   struct sprite_component {
-    FUSE_INLINE sprite_component(const sprite_component &) = default;
+    FUSE_INLINE sprite_component(const sprite_component&) = default;
     FUSE_INLINE sprite_component(asset_id id) : sprite(id) {}
     FUSE_INLINE sprite_component() = default;
     asset_id sprite = INVALID_ID;

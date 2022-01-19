@@ -3,7 +3,7 @@
 
 namespace fuse::ecs {
   struct tilemap_renderer_system : system {
-    FUSE_INLINE void update(float dt) {
+    FUSE_INLINE void update(float) {
       for (auto& entity : _registry->view<tilemap_component>()) {
         auto& tr = _registry->get_component<transform_component>(entity).transform;
         auto& id = _registry->get_component<tilemap_component>(entity).tilemap;

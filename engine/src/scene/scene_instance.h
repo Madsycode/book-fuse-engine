@@ -3,15 +3,19 @@
 #include "ecs/systems/sprite_renderer_system.h"
 #include "ecs/systems/text_renderer_system.h"
 #include "ecs/systems/animation_system.h"
+#include "ecs/systems/rigidbody_system.h"
+#include "ecs/systems/collision_system.h"
 
 namespace fuse {
   struct scene_instance {
-FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _dispatcher(dp) {
-  register_system<ecs::tilemap_renderer_system>();
-  register_system<ecs::sprite_renderer_system>();
-  register_system<ecs::animation_system>();
-  register_system<ecs::text_renderer_system>();
-}
+    FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _dispatcher(dp) {
+      register_system<ecs::rigidbody_system>();
+      register_system<ecs::collision_system>();
+      register_system<ecs::tilemap_renderer_system>();
+      register_system<ecs::sprite_renderer_system>();
+      register_system<ecs::animation_system>();
+      register_system<ecs::text_renderer_system>();
+    }
 
     FUSE_INLINE ~scene_instance() {
       _registry.clear();
@@ -25,31 +29,29 @@ FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _di
       this->_registry.refresh();      
     }
 
-FUSE_INLINE void start() {
-  auto tileset = _assets.load_texture("resource/ts.jpg", "ts", _renderer);
-  auto asset = _assets.add<tilemap_asset>("path", "name");
-  asset->tilemap.tilesets.insert(tileset->id);
-  asset->tilemap.col_count = 16;
-  asset->tilemap.row_count = 8;
-  asset->tilemap.tilesize = 64;
+  FUSE_INLINE void start() {
+    auto obj1 = _assets.load_texture("resource/obj1.png", "o1", _renderer)->id;
+    auto obj2 = _assets.load_texture("resource/obj2.png", "o2", _renderer)->id;
 
-  ecs::entity_id entity = _registry.add_entity();
-  _registry.add_component<ecs::transform_component>(entity);
-  _registry.add_component<ecs::tilemap_component>(entity, asset->id);
+    auto entity1 = _registry.add_entity();
+    _registry.add_component<ecs::transform_component>(entity1);
+    auto& body1 = _registry.add_component<ecs::rigidbody_component>(entity1).body;
+    body1.apply_force_x(50);
+    body1.gravity_scale = 0;
+    _registry.add_component<ecs::sprite_component>(entity1, obj1);
+    _registry.add_component<ecs::collider_component>(entity1);
 
-  for (int col = 0; col < asset->tilemap.col_count; col++) {
-    for (int row = 0; row <  asset->tilemap.row_count; row++) {
-      auto tile_entity = _registry.add_entity();
-      auto& tile = _registry.add_component<ecs::tile_component>(tile_entity);
-      tile.tileset = tileset->id;
-      tile.tilemap = asset->id;
-      tile.row = col;
-      tile.col = row;
-      tile.x = col;
-      tile.y = row;
-    }
+    auto entity2 = _registry.add_entity();
+    _registry.add_component<ecs::transform_component>(entity2).transform.translate.x = 500;
+      auto& body2 = _registry.add_component<ecs::rigidbody_component>(entity2).body;
+      body2.apply_force_x(-50);
+      body2.gravity_scale = 0;
+    _registry.add_component<ecs::sprite_component>(entity2, obj2);
+    _registry.add_component<ecs::collider_component>(entity2);
+
+    // start systems
+    for (auto& sys : _systems) { sys->start(); }
   }
-}
 
     template <typename T>
     FUSE_INLINE void register_system() {

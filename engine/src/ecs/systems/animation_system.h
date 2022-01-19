@@ -3,14 +3,14 @@
 
 namespace fuse::ecs {
   struct animation_system : system {
-    FUSE_INLINE void update(float dt) {
-      for (auto &entity : _registry->view<animation_component>()) {
+    FUSE_INLINE void update(float) {
+      for (auto& entity : _registry->view<animation_component>()) {
         auto& tr = _registry->get_component<transform_component>(entity).transform;
         auto& id = _registry->get_component<animation_component>(entity).animation;
 
         // get animation from assets
         auto& anim = _assets->get<animation_asset>(id)->animation;
-        int index = (SDL_GetTicks()/anim.speed) % anim.frame_count;
+        int index = (get_ticks_ms()/anim.speed) % anim.frame_count;
         auto& frame = _assets->get<texture_asset>(anim.frames[index])->texture;
 
         SDL_Rect dst_rect = { 

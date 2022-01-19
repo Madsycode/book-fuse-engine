@@ -3,7 +3,7 @@
 
 namespace fuse::ecs {
   struct text_renderer_system : system {
-    FUSE_INLINE void update(float dt) {
+    FUSE_INLINE void update(float) {
       for (auto& entity : _registry->view<text_component>()) {
         auto& tr = _registry->get_component<transform_component>(entity).transform;
         auto& tx = _registry->get_component<text_component>(entity);

@@ -76,15 +76,21 @@
     #define FUSE_NOINLINE
 #endif
 
-// function macros
-#define INVALID_ID 0
+// free allocated memory and sets it to null pointer
 #define FUSE_DELETE(pointer) if (pointer != NULL) { delete (pointer); }
+
+// attach lamda function to function call
 #define FUSE_BIND(f) [this](auto&&... args)->decltype(auto) \
 { return this->f(std::forward<decltype(args)>(args)...); }
+
+// get current time in second and millisecond
+#define get_ticks_sec() SDL_GetTicks64()/1000.0
+#define get_ticks_ms() SDL_GetTicks64()
 
 // window size
 #define SCREEN_WIDTH 1080
 #define SCREEN_HEIGHT 720
+#define INVALID_ID 0
 
 // universal unique id (uuid)
 namespace fuse {

@@ -5,9 +5,11 @@
 namespace fuse::ecs {
   struct registry {
     FUSE_INLINE void clear() {
+      for (auto [_, arr] : _components) {         
+        FUSE_DELETE(arr); 
+      }
       _components.clear();
       _signatures.clear();
-      _destroyed_entities.clear();
     }
 
     FUSE_INLINE void refresh() {
@@ -88,7 +90,7 @@ namespace fuse::ecs {
     }
 
   private:
-    std::unordered_map<type_id, array_instance *> _components;
+    std::unordered_map<type_id, array_instance*> _components;
     std::unordered_map<entity_id, signature> _signatures;
     entity_list _destroyed_entities;
   };

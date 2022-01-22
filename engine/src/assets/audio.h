@@ -4,8 +4,9 @@
 
 namespace fuse {
   struct audio_instance {
-    Mix_Chunk *data = NULL;
+    Mix_Chunk* data = NULL;
     int volume = 0;
+    int loop = 0;
   };
 
   struct audio_asset : asset_instance {

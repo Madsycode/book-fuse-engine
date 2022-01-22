@@ -17,21 +17,21 @@ namespace fuse::ecs {
             continue; 
           }
           // render tile
-          int x = tile.x + tr.translate.x;
-          int y = tile.y + tr.translate.y;                  
+          float x = tile.x + tr.translate.x;
+          float y = tile.y + tr.translate.y;                  
           draw_tile(tile.tileset, x, y, tile.row, tile.col, tilemap.tilesize);
         }
       }
     }
 
   private:
-    FUSE_INLINE void draw_tile(asset_id tileset_id, int x, int y, int row, int col, int size) {
-      SDL_Rect dst_rect = { x * size, y * size, size, size};
+    FUSE_INLINE void draw_tile(asset_id tileset_id, float x, float y, int row, int col, int size) {
+      SDL_FRect dst_rect = { x * size, y * size, size, size};
       SDL_Rect src_rect = {row * size, col * size, size, size};
       auto& tileset = _assets->get<texture_asset>(tileset_id)->texture;
-      SDL_RenderCopyEx(_renderer, tileset.data, &src_rect, &dst_rect, 0, NULL, tileset.flip);
+      SDL_RenderCopyExF(_renderer, tileset.data, &src_rect, &dst_rect, 0, NULL, tileset.flip);
       // render rectangle
-      SDL_RenderDrawRect(_renderer, &dst_rect);
+      SDL_RenderDrawRectF(_renderer, &dst_rect);
     }
   };
 }

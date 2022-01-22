@@ -32,9 +32,11 @@ namespace fuse::ecs {
           if (other == entity) { continue; }
           auto& c2 = _registry->get_component<collider_component>(other);
 
+          // call script oncllision() function
           if (check_collision(c1.collider, c2.collider)) {
-            auto& rb = _registry->get_component<rigidbody_component>(entity);
-            rb.body.gravity_scale = 0.5;
+            if(_registry->has_component<script_component>(entity)) {
+              _registry->get_component<script_component>(entity).script->on_collision(ecs::entity(other, _registry));
+            }
           }          
         }
       }

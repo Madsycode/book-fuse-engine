@@ -30,13 +30,13 @@ namespace fuse::ecs {
         // get texture size
         int width, height;
         SDL_QueryTexture(texture, NULL, NULL, &width, &height);
-        const SDL_Rect dst_rect = { 
+        const SDL_FRect dst_rect = { 
           tr.translate.x, tr.translate.y, 
           width * tr.scale.x, height * tr.scale.y
         };
 
         // render texture
-        SDL_RenderCopyEx(_renderer, texture, NULL, &dst_rect, tr.rotation, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyExF(_renderer, texture, NULL, &dst_rect, tr.rotation, NULL, SDL_FLIP_NONE);
         SDL_DestroyTexture(texture);
       }
     }

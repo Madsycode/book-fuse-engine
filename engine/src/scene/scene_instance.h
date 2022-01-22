@@ -5,19 +5,23 @@
 #include "ecs/systems/animation_system.h"
 #include "ecs/systems/rigidbody_system.h"
 #include "ecs/systems/collision_system.h"
+#include "ecs/systems/script_system.h"
+#include "scripts/player_controller.h"
 
 namespace fuse {
   struct scene_instance {
-    FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _dispatcher(dp) {
-      register_system<ecs::rigidbody_system>();
-      register_system<ecs::collision_system>();
-      register_system<ecs::tilemap_renderer_system>();
-      register_system<ecs::sprite_renderer_system>();
-      register_system<ecs::animation_system>();
-      register_system<ecs::text_renderer_system>();
-    }
+FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _dispatcher(dp) {
+  register_system<ecs::script_system>();
+  register_system<ecs::rigidbody_system>();
+  register_system<ecs::collision_system>();
+  register_system<ecs::tilemap_renderer_system>();
+  register_system<ecs::sprite_renderer_system>();
+  register_system<ecs::animation_system>();
+  register_system<ecs::text_renderer_system>();
+}
 
     FUSE_INLINE ~scene_instance() {
+      for (auto sys : _systems) { FUSE_DELETE(sys); }
       _registry.clear();
       _systems.clear();
       _assets.clear();
@@ -29,29 +33,28 @@ namespace fuse {
       this->_registry.refresh();      
     }
 
-  FUSE_INLINE void start() {
-    auto obj1 = _assets.load_texture("resource/obj1.png", "o1", _renderer)->id;
-    auto obj2 = _assets.load_texture("resource/obj2.png", "o2", _renderer)->id;
+    FUSE_INLINE void start() {
+      auto obj1 = _assets.load_texture("resource/obj1.png", "o1", _renderer)->id;
+      auto obj2 = _assets.load_texture("resource/obj2.png", "o2", _renderer)->id;
 
-    auto entity1 = _registry.add_entity();
-    _registry.add_component<ecs::transform_component>(entity1);
-    auto& body1 = _registry.add_component<ecs::rigidbody_component>(entity1).body;
-    body1.apply_force_x(50);
-    body1.gravity_scale = 0;
-    _registry.add_component<ecs::sprite_component>(entity1, obj1);
-    _registry.add_component<ecs::collider_component>(entity1);
+      auto entity1 = _registry.add_entity();
+      _registry.add_component<ecs::transform_component>(entity1);
+      auto& body1 = _registry.add_component<ecs::rigidbody_component>(entity1).body;
+      body1.gravity_scale = 0;
+      _registry.add_component<ecs::sprite_component>(entity1, obj1);
+      _registry.add_component<ecs::collider_component>(entity1);
 
-    auto entity2 = _registry.add_entity();
-    _registry.add_component<ecs::transform_component>(entity2).transform.translate.x = 500;
-      auto& body2 = _registry.add_component<ecs::rigidbody_component>(entity2).body;
-      body2.apply_force_x(-50);
-      body2.gravity_scale = 0;
-    _registry.add_component<ecs::sprite_component>(entity2, obj2);
-    _registry.add_component<ecs::collider_component>(entity2);
+      auto entity2 = _registry.add_entity();
+      _registry.add_component<ecs::transform_component>(entity2).transform.translate.x = 500;
+        auto& body2 = _registry.add_component<ecs::rigidbody_component>(entity2).body;
+        body2.gravity_scale = 0;
+      _registry.add_component<ecs::sprite_component>(entity2, obj2);
+      _registry.add_component<ecs::collider_component>(entity2);
+      _registry.add_component<ecs::script_component>(entity2).bind<player_controller>();
 
-    // start systems
-    for (auto& sys : _systems) { sys->start(); }
-  }
+      // start systems
+      for (auto& sys : _systems) { sys->start(); }
+    }
 
     template <typename T>
     FUSE_INLINE void register_system() {

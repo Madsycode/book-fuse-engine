@@ -13,7 +13,6 @@ namespace fuse::ecs {
     FUSE_INLINE text_component(asset_id font, const char* text): font(font), text(text) {}
     FUSE_INLINE text_component(const text_component &) = default;
     FUSE_INLINE text_component() = default;
-
     SDL_Color color = {0, 0, 0, 255};
     asset_id font = INVALID_ID;
     std::string text;

@@ -13,12 +13,12 @@ namespace fuse::ecs {
         int index = (get_ticks_ms()/anim.speed) % anim.frame_count;
         auto& frame = _assets->get<texture_asset>(anim.frames[index])->texture;
 
-        SDL_Rect dst_rect = { 
+        SDL_FRect dst_rect = { 
           tr.translate.x, tr.translate.y,
           frame.width * tr.scale.x, frame.height * tr.scale.y 
         };
         
-        SDL_RenderCopyEx(this->_renderer, frame.data, NULL, &dst_rect, tr.rotation, NULL, anim.flip);
+        SDL_RenderCopyExF(_renderer, frame.data, NULL, &dst_rect, tr.rotation, NULL, anim.flip);
       }
     }
   };

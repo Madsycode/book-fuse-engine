@@ -1,4 +1,5 @@
 #pragma once
+#include "ecs/components/behaviour.h"
 #include "ecs/components/graphics.h"
 #include "ecs/components/physics.h"
 #include "ecs/components/common.h"

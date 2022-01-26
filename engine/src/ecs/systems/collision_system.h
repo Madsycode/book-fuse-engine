@@ -24,6 +24,9 @@ namespace fuse::ecs {
         c1.collider.x = tr.transform.translate.x;
         c1.collider.y = tr.transform.translate.y;
 
+        // continue if disabled
+        if(c1.disabled) { continue; }
+
         // check collision with others
         for (auto& other : entities) {
           if (other == entity) { continue; }
@@ -31,7 +34,7 @@ namespace fuse::ecs {
 
           // call script oncllision() function
           if (check_collision(c1.collider, c2.collider)) {
-            if(_registry->has_component<script_component>(entity)) {
+            if(_registry->has_component<script_component>(entity)) {              
               _registry->get_component<script_component>(entity).instance->on_collision(ecs::entity(other, _registry));
             }
           }          

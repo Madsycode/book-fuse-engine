@@ -12,6 +12,7 @@ namespace fuse::ecs {
   struct collider_component {
     FUSE_INLINE collider_component(const collider_component&) = default;
     FUSE_INLINE collider_component() = default;
-    SDL_FRect collider = { 0.0f, 0.0f, 64.0f, 64.0f };     
+    SDL_FRect collider = { 0.0f, 0.0f, 64.0f, 64.0f };   
+    bool disabled = false;  
   };
 }

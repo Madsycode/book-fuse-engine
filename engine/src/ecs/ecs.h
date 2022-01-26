@@ -7,7 +7,7 @@ namespace fuse::ecs {
   // type definitions
 	using entity_id = unsigned int; 
 	using signature = std::set<type_id>; 
-	using entity_list = std::vector<entity_id>; 
+	using entity_list = std::set<entity_id>; 
 
   // component array data-entry
 	template<typename T>

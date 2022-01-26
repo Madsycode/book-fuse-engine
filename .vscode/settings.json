@@ -7,6 +7,7 @@
     "vector": "cpp",
     "algorithm": "cpp",
     "xstring": "cpp",
-    "xutility": "cpp"
+    "xutility": "cpp",
+    "set": "cpp"
   }
 }

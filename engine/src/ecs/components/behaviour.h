@@ -18,4 +18,10 @@ namespace fuse::ecs {
     script_instance* instance = NULL;
     script_allocator allocate;
   };
+
+  struct audio_component {
+    FUSE_INLINE audio_component(const audio_component&) = default;
+    FUSE_INLINE audio_component() = default;
+    asset_id audio;
+  };
 }

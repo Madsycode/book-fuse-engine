@@ -40,7 +40,7 @@ namespace fuse {
     FUSE_INLINE void update(float dt) {
       // set renderer clear color
       SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);      
-      
+
       // update registered systems
       for (auto& sys : _systems) { sys->update(dt); }
 
@@ -67,7 +67,6 @@ namespace fuse {
       // load sound effects
       auto music = _assets.load_audio("resource/song.mp3", "music");
       auto boom = _assets.load_audio("resource/boom.wav", "boom");
-      auto hit = _assets.load_audio("resource/hit.wav", "hit");
 
       // add player fly animation
       auto fly_a = _assets.add<animation_asset>("path", "fly");
@@ -83,8 +82,9 @@ namespace fuse {
       // add player entity
       auto player = add_entity("player");
       player.add_component<ecs::script_component>().bind<player_controller>();
+      player.add_component<ecs::audio_component>().audio = boom->id;
       auto& tr = player.get_component<ecs::transform_component>();
-      tr.transform.translate = vec2f(SCREEN_WIDTH/4, SCREEN_HEIGHT/2);
+      tr.transform.translate = vec2f(SCREEN_WIDTH/3, SCREEN_HEIGHT/2);
       tr.transform.scale = vec2f(0.15f);
       auto& rb = player.add_component<ecs::rigidbody_component>();
       rb.body.gravity_scale = 25.0f;
@@ -121,7 +121,9 @@ namespace fuse {
       tx.font = font->id;
 
       // game spawner
-      add_entity("game").add_component<ecs::script_component>().bind<game_controller>();
+      auto game = add_entity("game");
+      game.add_component<ecs::script_component>().bind<game_controller>();
+      game.add_component<ecs::audio_component>().audio = music->id;
 
       // start systems
       for (auto& sys : _systems) { sys->start(); }

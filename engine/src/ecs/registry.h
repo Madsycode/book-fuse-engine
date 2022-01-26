@@ -27,25 +27,21 @@ namespace fuse::ecs {
     FUSE_INLINE bool is_alive(entity_id entity) {
 			return _signatures.count(entity);
 		}
-    
-    // ++
 
     template <typename T>
     FUSE_INLINE entity_list view() {
       entity_list list;
       for (auto& [entity, sig] : _signatures) {
         if (sig.count(get_typeid<T>())) {
-          list.push_back(entity);
+          list.insert(entity);
           continue;
         }
       }
       return list;
     }
 
-    // ++  
-
     template <typename T>
-    FUSE_INLINE T &get_component(entity_id entity) {
+    FUSE_INLINE T& get_component(entity_id entity) {
       FUSE_ASSERT(_signatures.count(entity) && "out of range!");
       return get_component_array<T>()->get(entity);
     }
@@ -60,10 +56,8 @@ namespace fuse::ecs {
 
     template <typename T>
     FUSE_INLINE void remove_component(entity_id entity) {
-      if (has_component<T>(entity)) {
-        get_component_array<T>()->erase(entity);
-        _signatures.at(entity).erase(get_typeid<T>());
-      }
+      _signatures.at(entity).erase(get_typeid<T>());
+      get_component_array<T>()->erase(entity);
     }
 
     template <typename T>

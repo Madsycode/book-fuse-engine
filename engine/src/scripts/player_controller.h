@@ -8,6 +8,8 @@ namespace fuse {
     }
 
     FUSE_INLINE void on_collision(ecs::entity e) { 
+      play_audio(get_component<ecs::audio_component>().audio, 40, 0);
+      get_component<ecs::collider_component>().disabled = true;
       auto& an = get_component<ecs::animation_component>();
       an.animation = get_asset<animation_asset>("hurt")->id;
       auto& rb = get_component<ecs::rigidbody_component>();

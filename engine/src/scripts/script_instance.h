@@ -77,6 +77,12 @@ namespace fuse {
       FUSE_INLINE T* get_asset(const std::string& name) {
         return _assets->get<T>(name);
       }
+
+      FUSE_INLINE void play_audio(asset_id id, int vol, int loops = 0) {
+        auto& audio = _assets->get<audio_asset>(id)->audio;
+        Mix_VolumeChunk(audio, vol);                
+        Mix_PlayChannel(-1, audio, loops);     
+      }
       
   private:
     ecs::entity_id _entity = INVALID_ID;

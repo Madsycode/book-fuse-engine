@@ -5,11 +5,16 @@
 namespace fuse {
   struct game_controller : script_instance {
     FUSE_INLINE void on_start() {
-      
+      play_audio(get_component<ecs::audio_component>().audio, 40, -1);
     }
 
     FUSE_INLINE void on_update(float dt) {
-      if(game_over) { return; } 
+      if(game_over) { 
+        for(auto& pipe : pipes) {
+          pipe.get_component<ecs::rigidbody_component>().disabled = true;
+        }
+        return; 
+      } 
 
       // check if player is dead
       if(find_entity("player").get_component<ecs::rigidbody_component>().disabled) {      

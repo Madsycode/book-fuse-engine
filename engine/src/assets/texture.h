@@ -2,8 +2,7 @@
 #include "asset_instance.h"
 
 namespace fuse {
-  struct texture_instance {
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
+  struct texture_instance {    
     SDL_Texture *data = NULL;
     int height = 0;
     int width = 0;

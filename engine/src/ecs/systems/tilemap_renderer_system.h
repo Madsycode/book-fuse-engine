@@ -17,19 +17,19 @@ namespace fuse::ecs {
             continue; 
           }
           // render tile
-          float x = tile.x + tr.translate.x;
-          float y = tile.y + tr.translate.y;                  
-          draw_tile(tile.tileset, x, y, tile.row, tile.col, tilemap.tilesize);
+          float x = tile.offset_x + tr.translate.x;
+          float y = tile.offset_y + tr.translate.y;                  
+          draw_tile(tile.tileset, x, y, tile.row, tile.col, tilemap.tilesize, tile.flip);
         }
       }
     }
 
   private:
-    FUSE_INLINE void draw_tile(asset_id tileset_id, float x, float y, int row, int col, int size) {
+    FUSE_INLINE void draw_tile(asset_id tileset_id, float x, float y, int row, int col, int size, SDL_RendererFlip flip) {
       SDL_FRect dst_rect = { x * size, y * size, size, size};
-      SDL_Rect src_rect = {row * size, col * size, size, size};
+      SDL_Rect src_rect = { row * size, col * size, size, size };
       auto& tileset = _assets->get<texture_asset>(tileset_id)->texture;
-      SDL_RenderCopyExF(_renderer, tileset.data, &src_rect, &dst_rect, 0, NULL, tileset.flip);
+      SDL_RenderCopyExF(_renderer, tileset.data, &src_rect, &dst_rect, 0, NULL, flip);
       // render rectangle
       SDL_RenderDrawRectF(_renderer, &dst_rect);
     }

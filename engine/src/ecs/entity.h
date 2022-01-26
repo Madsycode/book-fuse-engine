@@ -4,7 +4,13 @@
 namespace fuse::ecs {
   struct entity {
     FUSE_INLINE entity(entity_id e, registry* r): _registry(r), _entity(e) {}
-    FUSE_INLINE entity(const entity&) = default;
+
+    FUSE_INLINE operator entity_id() { return _entity; }
+
+    FUSE_INLINE entity(registry* r): _registry(r) {
+      _entity = _registry->add_entity();
+    }
+
     FUSE_INLINE entity() = default;
 
     template<typename T, typename... Args>
@@ -27,13 +33,17 @@ namespace fuse::ecs {
       return _registry->has_component<T>(_entity);
     }
 
-    FUSE_INLINE void destroy() {
-			_registry->destroy_entity(_entity);
+    FUSE_INLINE bool is_alive() {
+			return _registry && _registry->is_alive(_entity);
 		}
 
-    FUSE_INLINE entity_id id() {
-			return _entity;
+    FUSE_INLINE void destroy() {
+			_registry->destroy(_entity);
 		}
+
+    FUSE_INLINE entity_id id() { 
+      return _entity; 
+    }
 
   private:
     entity_id _entity = INVALID_ID;

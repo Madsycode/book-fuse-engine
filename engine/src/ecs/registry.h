@@ -5,21 +5,9 @@
 namespace fuse::ecs {
   struct registry {
     FUSE_INLINE void clear() {
-      for (auto [_, arr] : _components) {         
-        FUSE_DELETE(arr); 
-      }
+      for (auto& [_, a] : _components) { FUSE_DELETE(a); }
       _components.clear();
       _signatures.clear();
-    }
-
-    FUSE_INLINE void refresh() {
-      for (auto &entity : _destroyed_entities) {
-        for (auto &[_, a] : _components) {
-          a->erase(entity);
-        }
-        _signatures.erase(entity);
-      }
-      _destroyed_entities.clear();
     }
 
     FUSE_INLINE entity_id add_entity() {
@@ -29,18 +17,25 @@ namespace fuse::ecs {
       return _nextid;
     }
 
-    FUSE_INLINE void destroy_entity(entity_id entity) {
-      _destroyed_entities.insert(entity);
+    FUSE_INLINE void destroy(entity_id entity) {
+      for (auto& [_, a] : _components) {
+        a->erase(entity);
+      }
+      _signatures.erase(entity);
     }
 
+    FUSE_INLINE bool is_alive(entity_id entity) {
+			return _signatures.count(entity);
+		}
+    
     // ++
 
     template <typename T>
     FUSE_INLINE entity_list view() {
       entity_list list;
-      for (auto &[entity, sig] : _signatures) {
+      for (auto& [entity, sig] : _signatures) {
         if (sig.count(get_typeid<T>())) {
-          list.insert(entity);
+          list.push_back(entity);
           continue;
         }
       }
@@ -92,6 +87,5 @@ namespace fuse::ecs {
   private:
     std::unordered_map<type_id, array_instance*> _components;
     std::unordered_map<entity_id, signature> _signatures;
-    entity_list _destroyed_entities;
   };
 }

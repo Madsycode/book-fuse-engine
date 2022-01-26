@@ -1,40 +1,27 @@
 #pragma once
-#include "fuse_script.h"
+#include "script_instance.h"
 
 namespace fuse {
-  struct player_controller : fuse_script {
-    FUSE_INLINE void on_create() { 
-      FUSE_INFO("player_script created!");
-    }
-
+  struct player_controller : script_instance {   
     FUSE_INLINE void on_start() { 
-      FUSE_INFO("player_script started!");
+     
     }
 
     FUSE_INLINE void on_collision(ecs::entity e) { 
-      FUSE_INFO("colliding with: %d", e.id());
+      auto& an = get_component<ecs::animation_component>();
+      an.animation = get_asset<animation_asset>("hurt")->id;
+      auto& rb = get_component<ecs::rigidbody_component>();
+      rb.disabled = true;
     }
 
-    FUSE_INLINE void on_update(float dt) { 
-      float speed = 300.0f;
-      auto& tr = get_component<ecs::transform_component>().transform;
-
-      // move left
-      if(inputs::is_pressed(SDL_SCANCODE_A)) {
-        tr.translate.x -= (speed * dt);
-      }
-      // move right
-      if(inputs::is_pressed(SDL_SCANCODE_D)) {
-        tr.translate.x += (speed * dt);
-      }
-      // move up
-      if(inputs::is_pressed(SDL_SCANCODE_W)) {
-        tr.translate.y -= (speed * dt);
-      }
-      // move down
-      if(inputs::is_pressed(SDL_SCANCODE_S)) {
-        tr.translate.y += (speed * dt);
-      }      
+    FUSE_INLINE void on_update(float dt) {      
+      auto& rb = get_component<ecs::rigidbody_component>();
+      if(inputs::is_pressed(SDL_SCANCODE_SPACE)) {
+        rb.body.set_force_y(-1000.0f);
+      }  
+      else {
+        rb.body.set_force_y(0.0f);
+      }            
     }
   };
 }

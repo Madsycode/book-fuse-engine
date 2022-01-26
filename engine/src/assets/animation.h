@@ -3,7 +3,6 @@
 
 namespace fuse {
   struct animation_instance {
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
     std::vector<asset_id> frames;
     int frame_count = 0;
     int speed = 100;

@@ -13,7 +13,7 @@ namespace fuse::ecs {
         
         // create text surface
         SDL_Surface *surface = NULL;
-        surface = TTF_RenderText_Blended(font.data, tx.text.c_str(), tx.color);
+        surface = TTF_RenderText_Blended(font, tx.text.c_str(), tx.color);
         if (!surface) {
           FUSE_ERROR("%s", TTF_GetError());
           continue;
@@ -35,8 +35,14 @@ namespace fuse::ecs {
           width * tr.scale.x, height * tr.scale.y
         };
 
+        // center of object
+        const SDL_FPoint center = { 
+          tr.translate.x + dst_rect.w/2.0f,
+          tr.translate.y + dst_rect.h/2.0f
+        };
+
         // render texture
-        SDL_RenderCopyExF(_renderer, texture, NULL, &dst_rect, tr.rotation, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyExF(_renderer, texture, NULL, &dst_rect, tr.rotation, &center, SDL_FLIP_NONE);
         SDL_DestroyTexture(texture);
       }
     }

@@ -30,11 +30,27 @@ namespace fuse {
     }
 
     FUSE_INLINE void clear() { 
+      for(auto& [_, list] : _data){
+        for(auto a : list) { FUSE_DELETE(a); }
+      }
       _data.clear(); 
     }
 
     template <typename T>
     FUSE_INLINE T* get(asset_id id) {
+      FUSE_STATIC_ASSERT(std::is_base_of<asset_instance, T>::value);
+      const type_id type = get_typeid<T>();
+      if(!_data.count(type)) { return NULL; }
+
+      for(auto& asset : _data.at(type)) {
+        if(asset->id == id) { return static_cast<T*>(asset); }
+      }
+      return NULL;
+    }
+
+     template <typename T>
+    FUSE_INLINE T* get(const std::string& name) {
+      asset_id id = get_id<T>(name);
       FUSE_STATIC_ASSERT(std::is_base_of<asset_instance, T>::value);
       const type_id type = get_typeid<T>();
       if(!_data.count(type)) { return NULL; }
@@ -68,11 +84,8 @@ namespace fuse {
     }  
 
     FUSE_INLINE font_asset* load_font(const std::string& path, const std::string& name, int size) {
-        font_instance font;
-        font.size = size;
-        font.data = TTF_OpenFont(path.c_str(), size);
-
-        if (!font.data) {
+        auto font = TTF_OpenFont(path.c_str(), size);
+        if (!font) {
           FUSE_ERROR("%s", IMG_GetError());
           return NULL;
         }
@@ -82,12 +95,9 @@ namespace fuse {
         return asset;
       }
 
-    FUSE_INLINE audio_asset* load_audio(const std::string& path, const std::string& name, int volume) {
-        audio_instance audio;
-        audio.volume = volume;
-        audio.data = Mix_LoadWAV(path.c_str());
-
-        if (!audio.data) {
+    FUSE_INLINE audio_asset* load_audio(const std::string& path, const std::string& name) {
+        auto audio = Mix_LoadWAV(path.c_str());
+        if (!audio) {
           FUSE_ERROR("%s", IMG_GetError());
           return NULL;
         }

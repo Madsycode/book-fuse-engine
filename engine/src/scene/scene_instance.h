@@ -6,19 +6,22 @@
 #include "ecs/systems/rigidbody_system.h"
 #include "ecs/systems/collision_system.h"
 #include "ecs/systems/script_system.h"
+
 #include "scripts/player_controller.h"
+#include "scripts/scrolling_ground.h"
+#include "scripts/game_controller.h"
 
 namespace fuse {
   struct scene_instance {
-FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _dispatcher(dp) {
-  register_system<ecs::script_system>();
-  register_system<ecs::rigidbody_system>();
-  register_system<ecs::collision_system>();
-  register_system<ecs::tilemap_renderer_system>();
-  register_system<ecs::sprite_renderer_system>();
-  register_system<ecs::animation_system>();
-  register_system<ecs::text_renderer_system>();
-}
+    FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _dispatcher(dp) {
+      register_system<ecs::script_system>();
+      register_system<ecs::rigidbody_system>();
+      register_system<ecs::collision_system>();
+      register_system<ecs::tilemap_renderer_system>();
+      register_system<ecs::sprite_renderer_system>();
+      register_system<ecs::animation_system>();
+      register_system<ecs::text_renderer_system>();
+    }
 
     FUSE_INLINE ~scene_instance() {
       for (auto sys : _systems) { FUSE_DELETE(sys); }
@@ -27,30 +30,98 @@ FUSE_INLINE scene_instance(SDL_Renderer *rd, dispatcher *dp): _renderer(rd), _di
       _assets.clear();
     }
 
+    FUSE_INLINE ecs::entity add_entity(const std::string& name) {
+      auto entity = ecs::entity(&_registry);
+      entity.add_component<ecs::info_component>().name = name;
+      entity.add_component<ecs::transform_component>();
+      return entity;
+    }
+
     FUSE_INLINE void update(float dt) {
+      // set renderer clear color
       SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);      
+      
+      // update registered systems
       for (auto& sys : _systems) { sys->update(dt); }
-      this->_registry.refresh();      
+
+      // render colliders
+      SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+      for(auto& e : _registry.view<ecs::collider_component>()) {
+        auto& cl = _registry.get_component<ecs::collider_component>(e);
+        SDL_RenderDrawRectF(_renderer, &cl.collider);
+      }
     }
 
     FUSE_INLINE void start() {
-      auto obj1 = _assets.load_texture("resource/obj1.png", "o1", _renderer)->id;
-      auto obj2 = _assets.load_texture("resource/obj2.png", "o2", _renderer)->id;
+      // load player sprites
+      auto fly1 = _assets.load_texture("resource/fly_1.png", "fly_1", _renderer);
+      auto fly2 = _assets.load_texture("resource/fly_2.png", "fly_2", _renderer);
+      auto hurt = _assets.load_texture("resource/hurt_1.png", "hurt", _renderer);
+      // load pipe sprite
+      auto pipe = _assets.load_texture("resource/pipe.png", "pipe", _renderer);
+      // load bg texture
+      auto gd = _assets.load_texture("resource/ground.png", "ground", _renderer);
+      auto bg = _assets.load_texture("resource/bg1.png", "bg", _renderer);
+      // load text font 
+      auto font = _assets.load_font("resource/font.ttf", "font", 30);
+      // load sound effects
+      auto music = _assets.load_audio("resource/song.mp3", "music");
+      auto boom = _assets.load_audio("resource/boom.wav", "boom");
+      auto hit = _assets.load_audio("resource/hit.wav", "hit");
 
-      auto entity1 = _registry.add_entity();
-      _registry.add_component<ecs::transform_component>(entity1);
-      auto& body1 = _registry.add_component<ecs::rigidbody_component>(entity1).body;
-      body1.gravity_scale = 0;
-      _registry.add_component<ecs::sprite_component>(entity1, obj1);
-      _registry.add_component<ecs::collider_component>(entity1);
+      // add player fly animation
+      auto fly_a = _assets.add<animation_asset>("path", "fly");
+      fly_a->animation.frames.push_back(fly1->id);                       
+      fly_a->animation.frames.push_back(fly2->id);                       
+      fly_a->animation.frame_count = 2;
 
-      auto entity2 = _registry.add_entity();
-      _registry.add_component<ecs::transform_component>(entity2).transform.translate.x = 500;
-        auto& body2 = _registry.add_component<ecs::rigidbody_component>(entity2).body;
-        body2.gravity_scale = 0;
-      _registry.add_component<ecs::sprite_component>(entity2, obj2);
-      _registry.add_component<ecs::collider_component>(entity2);
-      _registry.add_component<ecs::script_component>(entity2).bind<player_controller>();
+      // add player hurt animation
+      auto hurt_a = _assets.add<animation_asset>("path", "hurt");
+      hurt_a->animation.frames.push_back(hurt->id);  
+      hurt_a->animation.frame_count = 1;
+
+      // add player entity
+      auto player = add_entity("player");
+      player.add_component<ecs::script_component>().bind<player_controller>();
+      auto& tr = player.get_component<ecs::transform_component>();
+      tr.transform.translate = vec2f(SCREEN_WIDTH/4, SCREEN_HEIGHT/2);
+      tr.transform.scale = vec2f(0.15f);
+      auto& rb = player.add_component<ecs::rigidbody_component>();
+      rb.body.gravity_scale = 25.0f;
+      auto& an = player.add_component<ecs::animation_component>();
+      an.animation = fly_a->id;
+      auto& cl = player.add_component<ecs::collider_component>();
+      cl.collider = { 0, 0, 58, 38 };
+
+      // background 1            
+      auto background = add_entity("background");
+      auto& bg_tr = background.add_component<ecs::transform_component>();
+      bg_tr.transform.translate = vec2f(-5, -5);
+      auto& bg_sp = background.add_component<ecs::sprite_component>(); 
+      bg_sp.sprite = bg->id;
+
+      // ground
+      auto ground = add_entity("ground");
+      ground.add_component<ecs::script_component>().bind<scrolling_ground>();
+      auto& gd_tr = ground.get_component<ecs::transform_component>();
+      gd_tr.transform.translate = vec2f(0.0f, SCREEN_HEIGHT - 100);
+      auto& gd_rb = ground.add_component<ecs::rigidbody_component>();
+      gd_rb.body.velocity.x = -100.0f;
+      auto& gd_sp = ground.add_component<ecs::sprite_component>(); 
+      gd_sp.sprite = gd->id;
+      auto& gd_cl =ground.add_component<ecs::collider_component>();
+      gd_cl.collider = { 0, 0, (float)gd->texture.width, (float)gd->texture.height };
+      
+      // score text entity
+      auto score = add_entity("score");     
+      auto& sc_tr = score.get_component<ecs::transform_component>();
+      sc_tr.transform.translate = vec2f(120, 20);
+      auto& tx = score.add_component<ecs::text_component>();
+      tx.text = "Score: 0";
+      tx.font = font->id;
+
+      // game spawner
+      add_entity("game").add_component<ecs::script_component>().bind<game_controller>();
 
       // start systems
       for (auto& sys : _systems) { sys->start(); }

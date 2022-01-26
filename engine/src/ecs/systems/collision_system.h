@@ -21,11 +21,8 @@ namespace fuse::ecs {
         auto& c1 = _registry->get_component<collider_component>(entity);
 
         // update box collider offset
-        c1.collider.x = (int)tr.transform.translate.x;
-        c1.collider.y = (int)tr.transform.translate.y;
-
-        // render box collider
-        render_collider(c1.collider);
+        c1.collider.x = tr.transform.translate.x;
+        c1.collider.y = tr.transform.translate.y;
 
         // check collision with others
         for (auto& other : entities) {
@@ -35,7 +32,7 @@ namespace fuse::ecs {
           // call script oncllision() function
           if (check_collision(c1.collider, c2.collider)) {
             if(_registry->has_component<script_component>(entity)) {
-              _registry->get_component<script_component>(entity).script->on_collision(ecs::entity(other, _registry));
+              _registry->get_component<script_component>(entity).instance->on_collision(ecs::entity(other, _registry));
             }
           }          
         }
@@ -43,15 +40,9 @@ namespace fuse::ecs {
     }
 
   private:
-    bool check_collision(const SDL_Rect& a, const SDL_Rect& b) {
+    bool check_collision(const SDL_FRect& a, const SDL_FRect& b) {
       return ((a.x < b.x + b.w) && (a.x + a.w > b.x)) &&
              ((a.y < b.y + b.h) && (a.y + a.h > b.y));
-    }
-
-    void render_collider(const SDL_Rect& box) {
-      SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-      SDL_RenderDrawRect(_renderer, &box);
-      SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
     }
   };
 }

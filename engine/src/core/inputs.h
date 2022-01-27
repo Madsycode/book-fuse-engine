@@ -3,12 +3,20 @@
 #include "core/dispatcher.h"
 
 namespace fuse::inputs {
-    FUSE_API vec2i mouse_wheel();
-    FUSE_API vec2i mouse_position();
+  struct mouse_state {
+    std::bitset<7> buttons = {0};
+    vec2f offset;
+    vec2f wheel;
+  };
 
-    FUSE_API bool is_pressed(int key);
-    FUSE_API bool is_down(int button);
+  FUSE_API const vec2f& mouse_wheel();
+  FUSE_API const vec2f& mouse_offset();
+  FUSE_API const vec2f& display_size();
 
-    FUSE_API dispatcher* get_dispatcher();
-    FUSE_API void process_events();
+  FUSE_API bool is_button(int);
+  FUSE_API bool is_key(int);
+
+  FUSE_API dispatcher* get_disp();
+  void initialize(SDL_Window*);
+  void dispatch_events();
 }

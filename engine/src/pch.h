@@ -84,12 +84,10 @@
 { return this->f(std::forward<decltype(args)>(args)...); }
 
 // get current time in second and millisecond
-#define get_ticks_sec() SDL_GetTicks()/1000.0f
+#define get_ticks() SDL_GetTicks()/1000.0f
 #define get_ticks_ms() SDL_GetTicks()
 
 // window size
-#define SCREEN_WIDTH 380
-#define SCREEN_HEIGHT 720
 #define INVALID_ID 0
 
 // universal unique id (uuid)

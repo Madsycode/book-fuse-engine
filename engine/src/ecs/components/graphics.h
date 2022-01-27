@@ -1,5 +1,5 @@
 #pragma once
-#include "assets/asset_instance.h"
+#include "assets/asset.h"
 
 namespace fuse::ecs {
   struct sprite_component {

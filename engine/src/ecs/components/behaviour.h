@@ -8,7 +8,7 @@ namespace fuse::ecs {
 
     template<typename T>
     FUSE_INLINE void bind() { 
-      allocate = [](const script_props& props) { 
+      instantiate = [](const script_props& props) { 
         auto script = static_cast<script_instance*>(new T());         
         script->init(props);
         return script;
@@ -16,7 +16,8 @@ namespace fuse::ecs {
     }   
 
     script_instance* instance = NULL;
-    script_allocator allocate;
+    script_instantiator instantiate;
+    std::string name;
   };
 
   struct audio_component {

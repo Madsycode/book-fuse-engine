@@ -1,21 +1,21 @@
 #pragma once
-#include "asset_instance.h"
+#include "asset.h"
 
 namespace fuse {
-  struct animation_instance {
+  struct animation {
     std::vector<asset_id> frames;
     int speed = 100;
   };
 
-  struct animation_asset : asset_instance {
-    FUSE_INLINE animation_asset(const std::string& name, const animation_instance& data) {
+  struct animation_asset : asset {
+    FUSE_INLINE animation_asset(const std::string& name, const animation& data) {
       this->animation = data;
       this->name = name;
     }
 
     FUSE_INLINE animation_asset() = default;
 
-    animation_instance animation;
+    animation animation;
   };
 
   

@@ -1,85 +1,55 @@
 #pragma once
+#include "entity.h"
 #include "helpers/yaml.h"
-#include "scene/scene_instance.h"
-#include "assets/asset_serializer.h"
+#include "components/common.h"
+#include "components/physics.h"
+#include "components/graphics.h"
+#include "components/behaviour.h"
 
-namespace fuse {
-  struct scene_serializer {
-    FUSE_INLINE scene_serializer(scene_instance* scene): _scene(scene) {}
+namespace fuse::ecs {
+  struct serializer {
+    FUSE_INLINE serializer(registry* reg): _registry(reg) {}
 
-    FUSE_INLINE bool deserialize(const std::string& path) {
-      YAML::Node root;
-      try {
-        root = YAML::LoadFile(path);
-      }
-      catch (YAML::ParserException e) {
-        FUSE_INFO("failed to deserialize scene!");
-        return false;
-      }  
-
-      // deserialize assets
-      if(auto asset_nodes = root["assets"]) {
-        asset_serializer asz(&_scene->_assets);
-        asz.deserialize(asset_nodes, _scene->_renderer);
-      }
-
-      // clear entity registry
-      _scene->_registry.clear();
+    FUSE_INLINE void deserialize(YAML::Node nodes) {      
+      // clear registry
+      _registry->clear();
 
       // deserialize entities
-      if(auto entity_nodes = root["entities"]) {
-        for(auto node : entity_nodes) {
-          ecs::entity entity(&_scene->_registry);          
-          deserialize_info(node, entity);
-          deserialize_transform(node, entity);
-          deserialize_rigidbody(node, entity);
-          deserialize_collider(node, entity);
-          deserialize_sprite(node, entity);
-          deserialize_animation(node, entity);
-          deserialize_audio(node, entity);
-          deserialize_text(node, entity);
-        }
-      }   
-
-      // start scene
-      _scene->start();   
-      return true;
+      for(auto node : nodes) {
+        ecs::entity entity(_registry);          
+        deserialize_info(node, entity);
+        deserialize_transform(node, entity);
+        deserialize_rigidbody(node, entity);
+        deserialize_collider(node, entity);
+        deserialize_sprite(node, entity);
+        deserialize_animation(node, entity);
+        deserialize_audio(node, entity);
+        deserialize_text(node, entity);
+        deserialize_script(node, entity);
+      }  
     }
 
-    FUSE_INLINE bool serialize(const std::string& path) {
-      YAML::Emitter emitter;
-
-      emitter << YAML::BeginMap;
+    FUSE_INLINE void serialize(YAML::Emitter& emitter) {      
+      emitter << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq;
       {
-        // serialize assets
-        asset_serializer(&_scene->_assets).serialize(emitter);
-
-        // serialize entities
-        emitter << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq;
-        {
-          for (auto& e : _scene->_registry.view<ecs::info_component>()) {
-            ecs::entity entity(e, &_scene->_registry);
-            emitter << YAML::BeginMap;
-            {
-              serialize_info(emitter, entity);
-              serialize_transform(emitter, entity);
-              serialize_rigidbody(emitter, entity);
-              serialize_collider(emitter, entity);
-              serialize_sprite(emitter, entity);
-              serialize_animation(emitter, entity);
-              serialize_audio(emitter, entity);
-              serialize_text(emitter, entity);
-            }
-            emitter << YAML::EndMap;
+        for (auto& e : _registry->view<ecs::info_component>()) {
+          ecs::entity entity(e, _registry);
+          emitter << YAML::BeginMap;
+          {
+            serialize_info(emitter, entity);
+            serialize_transform(emitter, entity);
+            serialize_rigidbody(emitter, entity);
+            serialize_collider(emitter, entity);
+            serialize_sprite(emitter, entity);
+            serialize_animation(emitter, entity);
+            serialize_audio(emitter, entity);
+            serialize_text(emitter, entity);
+            serialize_script(emitter, entity);
           }
+          emitter << YAML::EndMap;
         }
-        emitter << YAML::EndSeq;
       }
-      emitter << YAML::EndMap;
-
-      std::ofstream filepath(path);
-			filepath << emitter.c_str();
-      return true;
+      emitter << YAML::EndSeq;
     }
 
     // ++
@@ -189,6 +159,17 @@ namespace fuse {
 			}
 		}
 
+    // serialize script_component
+    FUSE_INLINE void serialize_script(YAML::Emitter& em, ecs::entity& e) {
+			if (e.has_component<ecs::script_component>()) {
+        auto& s = e.get_component<ecs::script_component>();
+        em << YAML::Key << "script_component";
+				em << YAML::BeginMap;
+				em << YAML::Key << "name" << YAML::Value << s.name;
+				em << YAML::EndMap;
+			}
+		}
+
     // ++
 
     // deserialize info_component
@@ -272,7 +253,25 @@ namespace fuse {
 			}
 		}
 
+    // deserialize script_component
+    FUSE_INLINE void deserialize_script(YAML::Node node, ecs::entity& e) {
+			if (auto data = node["script_component"]) {
+        auto& s = e.add_component<ecs::script_component>();
+        s.name = data["name"].as<std::string>();
+
+        if(!s.name.compare("player_controller")) {
+          s.bind<player_controller>();
+        }
+        else if(!s.name.compare("scrolling_ground")) {
+          s.bind<scrolling_ground>();
+        }
+        else if(!s.name.compare("game_controller")) {
+          s.bind<game_controller>();
+        }
+  			}
+		}
+
   private:
-    scene_instance* _scene = NULL;
+    registry* _registry = NULL;
   };
 }

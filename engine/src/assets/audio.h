@@ -1,6 +1,6 @@
 #pragma once
 
-#include "asset_instance.h"
+#include "asset.h"
 
 namespace fuse {
   struct audio_instance {
@@ -8,7 +8,7 @@ namespace fuse {
     std::string filename;
   };
 
-  struct audio_asset : asset_instance {
+  struct audio_asset : asset {
     FUSE_INLINE audio_asset(const std::string& name, const audio_instance& audio) {
       this->audio = audio;
       this->name = name;

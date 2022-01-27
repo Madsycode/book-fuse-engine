@@ -3,28 +3,29 @@
 
 namespace fuse {
   struct game_controller : script_instance {
-    FUSE_INLINE void on_start() {
+    FUSE_INLINE void on_start() {    
       play_audio(get_component<ecs::audio_component>().audio, -1);
     }
 
     FUSE_INLINE void on_update(float dt) {
-      if(game_over) { 
-        for(auto& pipe : pipes) {
-          pipe.get_component<ecs::rigidbody_component>().disabled = true;
-          pipe.get_component<ecs::collider_component>().disabled = true;
-        }
-        return; 
-      } 
+      if(game_over) { return; }
 
-      // check if player is dead
+      // check if player's rigidbody is disabled
       if(find_entity("player").get_component<ecs::rigidbody_component>().disabled) {      
-        // stop ground scrolling animation
-        find_entity("ground").get_component<ecs::rigidbody_component>().disabled = true;      
+        // stop ground scroll animation
+        find_entity("ground").get_component<ecs::rigidbody_component>().disabled = true;
+
         // show game over text
         auto& tx = find_entity("score").add_component<ecs::text_component>();
         tx.font = get_asset<font_asset>("font")->id;
-        tx.text = "GAME OVER";        
-        game_over = true;   
+        tx.text = "GAME OVER";       
+
+        // stop all pipes motion 
+        for(auto& pipe : pipes) {          
+          pipe.get_component<ecs::rigidbody_component>().disabled = true;
+          pipe.get_component<ecs::collider_component>().disabled = true;
+        }
+        game_over = true;
         return;    
       }
 
@@ -33,8 +34,9 @@ namespace fuse {
 
       if(time > 2.5f) {               
         float space = math::random(60, 150);
-        spawn_pipe(SCREEN_WIDTH, -space);         
-        spawn_pipe(SCREEN_WIDTH, SCREEN_HEIGHT/2 + space);
+        auto dsize = inputs::display_size();
+        spawn_pipe(dsize.x, -space);         
+        spawn_pipe(dsize.x, dsize.y/2 + space);
         time = 0.0f;
       } 
     }
@@ -42,16 +44,19 @@ namespace fuse {
     FUSE_INLINE void spawn_pipe(float x, float y) {
       auto pipe = add_entity();     
       auto& tr = pipe.get_component<ecs::transform_component>();
-      tr.transform.translate = vec2f(x, y);      
+      tr.transform.translate = vec2f(x, y);  
+
       // add rigidbody
       auto& rb = pipe.add_component<ecs::rigidbody_component>();   
       rb.body.gravity_scale = 0.0f;
       rb.body.velocity.x = -speed;
+
       // add sprite
       auto pipe_sprite = get_asset<texture_asset>("pipe");
       auto& sp = pipe.add_component<ecs::sprite_component>();    
       sp.flip = (y < 0)? SDL_FLIP_NONE : SDL_FLIP_VERTICAL;
       sp.sprite = pipe_sprite->id;
+
       // add collider
       auto& cl = pipe.add_component<ecs::collider_component>();
       cl.collider = { 
@@ -83,8 +88,8 @@ namespace fuse {
       }         
     }
 
-  private:     
-    std::vector<ecs::entity> pipes;
+  private:    
+    std::vector<ecs::entity> pipes;  
     bool game_over = false;
     float speed = 100.0f;
     float time = 0.0f;

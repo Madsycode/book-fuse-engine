@@ -10,7 +10,7 @@ namespace fuse {
 
     FUSE_INLINE void on_update(float dt) {    
       auto& tr = get_component<ecs::transform_component>();
-      if(tr.transform.translate.x + width < SCREEN_WIDTH) {
+      if(tr.transform.translate.x + width < inputs::display_size().x) {
         tr.transform.translate.x = 0.0;
       }
     }

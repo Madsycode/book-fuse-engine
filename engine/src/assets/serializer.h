@@ -1,24 +1,25 @@
 #pragma once
+#include "registry.h"
 #include "helpers/yaml.h"
-#include "asset_registry.h"
 
 namespace fuse {
   struct asset_serializer {
     FUSE_INLINE asset_serializer(asset_registry* assets): _assets(assets) {}
 
-    FUSE_INLINE bool deserialize(YAML::Node& asset_nodes, SDL_Renderer* target) {
-      _assets->clear();  
-      YAML::Node nodes = asset_nodes;
+    FUSE_INLINE void deserialize(YAML::Node& nodes, SDL_Renderer* rd) {
+      // clear registry
+      _assets->clear();
+
+      // deserialize assets
       for(auto node : nodes) {        
-        deserialize_texture(node, target);
+        deserialize_texture(node, rd);
         deserialize_animation(node);
         deserialize_audio(node);
         deserialize_font(node);
       }          
-      return true;
     }
 
-    FUSE_INLINE bool serialize(YAML::Emitter& emitter) {
+    FUSE_INLINE void serialize(YAML::Emitter& emitter) {
       emitter << YAML::Key << "assets" << YAML::Value << YAML::BeginSeq;
       {
         // serialize animation
@@ -47,10 +48,10 @@ namespace fuse {
         }
       }
       emitter << YAML::EndSeq;
-      return true;
     }
 
     // ++
+
     // serialize animation_asset
     FUSE_INLINE void serialize_animation(YAML::Emitter& em, animation_asset* asset) {
 			if (asset) {
@@ -108,6 +109,16 @@ namespace fuse {
 
     // ++
 
+    // deserialize texture_asset
+    FUSE_INLINE void deserialize_texture(YAML::Node node, SDL_Renderer* target) {
+			if (auto data = node["texture"]) {
+        auto source = data["source"].as<std::string>();
+        auto name = data["name"].as<std::string>();
+        auto asset = _assets->import_texture(source, name, target);
+        asset->id = data["id"].as<asset_id>();
+			}
+		}
+
     // deserialize animation_asset
     FUSE_INLINE void deserialize_animation(YAML::Node node) {
 			if (const auto data = node["animation"]) {
@@ -125,16 +136,6 @@ namespace fuse {
           i++;
         }
         asset->animation.speed = data["speed"].as<int>();        
-        asset->id = data["id"].as<asset_id>();
-			}
-		}
-
-    // deserialize texture_asset
-    FUSE_INLINE void deserialize_texture(YAML::Node node, SDL_Renderer* target) {
-			if (auto data = node["texture"]) {
-        auto source = data["source"].as<std::string>();
-        auto name = data["name"].as<std::string>();
-        auto asset = _assets->import_texture(source, name, target);
         asset->id = data["id"].as<asset_id>();
 			}
 		}

@@ -7,7 +7,7 @@ namespace fuse {
   };
 
   struct resized_event : event_instance {
-    FUSE_INLINE resized_event(int w, int h):width(w),height(h){}
+    FUSE_INLINE resized_event(int w, int h): width(w), height(h){}
     int width, height;
   };
 

@@ -1,64 +1,64 @@
 assets:
   - animation:
-      id: 3001328765460486836
+      id: 17626243718492266802
       name: fly
       speed: 100
-      frame0: 3153075052308735658
-      frame1: 3390047466586871798
+      frame0: 7063654337485224426
+      frame1: 10471685330666331656
   - animation:
-      id: 14068658587267860180
+      id: 7722332604438332167
       name: hurt
       speed: 100
-      frame0: 6429827260042882703
+      frame0: 14512360625200477795
   - texture:
-      id: 3153075052308735658
+      id: 7063654337485224426
       name: fly_1
       source: assets/fly_1.png
   - texture:
-      id: 3390047466586871798
+      id: 10471685330666331656
       name: fly_2
       source: assets/fly_2.png
   - texture:
-      id: 6429827260042882703
+      id: 14512360625200477795
       name: hurt
       source: assets/hurt_1.png
   - texture:
-      id: 1644700362559708964
+      id: 9369645909152580400
       name: pipe
       source: assets/pipe.png
   - texture:
-      id: 9481909148788738300
+      id: 6530159210233325347
       name: ground
       source: assets/ground.png
   - texture:
-      id: 8856103368483127438
+      id: 2234281881859053318
       name: bg
       source: assets/bg1.png
   - audio:
-      id: 7607125718020449848
+      id: 17441928881988725071
       name: music
       source: assets/song.mp3
   - audio:
-      id: 1607378452734678896
+      id: 10134447457170308539
       name: boom
       source: assets/boom.wav
   - font:
-      id: 106689022052051438
+      id: 14351050285801764013
       name: font
       size: 30
       source: assets/font.ttf
 entities:
   - info_component:
-      uuid: 14633014385540396310
+      uuid: 1262126381375044817
       name: player
       tag: default
     transform_component:
-      translate: [126, 421.599915]
+      translate: [126.666664, 325.714661]
       rotation: 0
       scale: [0.150000006, 0.150000006]
     rigidbody_component:
       gravity: 25
-      velocity: [0, 171.500015]
+      velocity: [0, 10.8252048]
       disabled: false
       force: [0, 0]
     collider_component:
@@ -66,12 +66,14 @@ entities:
       height: 38
       disabled: false
     animation_component:
-      animation: 3001328765460486836
+      animation: 17626243718492266802
       flip: 0
     audio_component:
-      audio: 1607378452734678896
+      audio: 10134447457170308539
+    script_component:
+      name: player_controller
   - info_component:
-      uuid: 1592099269323618844
+      uuid: 2536376052334560951
       name: background
       tag: default
     transform_component:
@@ -79,14 +81,14 @@ entities:
       rotation: 0
       scale: [1, 1]
     sprite_component:
-      sprite: 8856103368483127438
+      sprite: 2234281881859053318
       flip: 0
   - info_component:
-      uuid: 10453089675006330818
+      uuid: 13929082834493831858
       name: ground
       tag: default
     transform_component:
-      translate: [-70.0000153, 620]
+      translate: [-168.500061, 620]
       rotation: 0
       scale: [1, 1]
     rigidbody_component:
@@ -99,10 +101,12 @@ entities:
       height: 265
       disabled: false
     sprite_component:
-      sprite: 9481909148788738300
+      sprite: 6530159210233325347
       flip: 0
+    script_component:
+      name: scrolling_ground
   - info_component:
-      uuid: 8036310431760176487
+      uuid: 2700654742033652716
       name: score
       tag: default
     transform_component:
@@ -115,10 +119,10 @@ entities:
       B: 255
       A: 255
       text: "Score: 0"
-      font: 106689022052051438
+      font: 14351050285801764013
       flip: 0
   - info_component:
-      uuid: 12421924984798225775
+      uuid: 12269971520782204334
       name: game
       tag: default
     transform_component:
@@ -126,4 +130,6 @@ entities:
       rotation: 0
       scale: [1, 1]
     audio_component:
-      audio: 7607125718020449848
+      audio: 17441928881988725071
+    script_component:
+      name: game_controller

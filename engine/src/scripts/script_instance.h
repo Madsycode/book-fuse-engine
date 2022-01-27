@@ -4,7 +4,7 @@
 #include "ecs/components/common.h"
 #include "ecs/entity.h"
 
-#include "assets/asset_registry.h"
+#include "assets/registry.h"
 #include "core/inputs.h"
 #include "math/math.h"
 
@@ -78,7 +78,7 @@ namespace fuse {
         return _assets->get<T>(name);
       }
 
-      FUSE_INLINE void play_audio(asset_id id, int loops = 0, int vol = 0) {
+      FUSE_INLINE void play_audio(asset_id id, int loops = 0, int vol = 80) {
         auto& chunck = _assets->get<audio_asset>(id)->audio.data;
         Mix_VolumeChunk(chunck, vol);                
         Mix_PlayChannel(-1, chunck, loops);     
@@ -91,5 +91,5 @@ namespace fuse {
   };
 
   // script allocator function type
-  using script_allocator = std::function<script_instance*(const script_props&)>;
+  using script_instantiator = std::function<script_instance*(const script_props&)>;
 } 

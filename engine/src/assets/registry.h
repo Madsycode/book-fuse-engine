@@ -9,36 +9,20 @@
 
 namespace fuse {
   struct asset_registry {
-    FUSE_INLINE asset_registry() {
-      // init SDL_image
-      if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_WEBP | IMG_INIT_TIF) < 0) {
-        FUSE_ERROR("IMG_Init failed %s", IMG_GetError());
-      }
-
-      // init SDL_ttf
-      if(TTF_Init() < 0) { 
-        FUSE_ERROR("TTF_Init failed: %s", TTF_GetError());         
-      }
-
-      // init SDL_mixer
-      if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_OPUS | MIX_INIT_OGG) < 0) {
-        FUSE_ERROR("Mix_Init failed: %s", Mix_GetError());
-      }
-      if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 512) < 0) {
-        FUSE_ERROR("Mix_OpenAudio failed: %s", Mix_GetError());
-      }
-    }
+    FUSE_INLINE asset_registry() = default;
 
     FUSE_INLINE void clear() { 
       for(auto& [_, list] : _data){
-        for(auto a : list) { FUSE_DELETE(a); }
+        for(auto a : list) { 
+          FUSE_DELETE(a);
+        }
       }
       _data.clear(); 
     }
 
     template <typename T>
     FUSE_INLINE T* get(asset_id id) {
-      FUSE_STATIC_ASSERT(std::is_base_of<asset_instance, T>::value);
+      FUSE_STATIC_ASSERT(std::is_base_of<asset, T>::value);
       const type_id type = get_typeid<T>();
       if(!_data.count(type)) { return NULL; }
 
@@ -51,7 +35,7 @@ namespace fuse {
      template <typename T>
     FUSE_INLINE T* get(const std::string& name) {
       asset_id id = get_id<T>(name);
-      FUSE_STATIC_ASSERT(std::is_base_of<asset_instance, T>::value);
+      FUSE_STATIC_ASSERT(std::is_base_of<asset, T>::value);
       const type_id type = get_typeid<T>();
       if(!_data.count(type)) { return NULL; }
 
@@ -63,8 +47,8 @@ namespace fuse {
 
     template<typename T>
     FUSE_INLINE asset_id get_id(const std::string& name) {
-      FUSE_STATIC_ASSERT(std::is_base_of<asset_instance, T>::value);
-      type_id type = get_typeid<T>();
+      FUSE_STATIC_ASSERT(std::is_base_of<asset, T>::value);
+      const type_id type = get_typeid<T>();
       if(!_data.count(type)) { return INVALID_ID; }
 
       for(auto& asset : _data.at(type)) {
@@ -97,7 +81,7 @@ namespace fuse {
       }
 
     FUSE_INLINE font_asset* import_font(const std::string& path, const std::string& name, int size) {
-      font_instance font;
+      font font;
       font.data = TTF_OpenFont(path.c_str(), size);
       font.filename = path;
       font.size = size;
@@ -113,7 +97,7 @@ namespace fuse {
     }
 
     FUSE_INLINE texture_asset* import_texture(const std::string& path, const std::string& name, SDL_Renderer* target) {
-      texture_instance tx;
+      texture tx;
       tx.data = IMG_LoadTexture(target, path.c_str());
       tx.filename = path;
 

@@ -1,84 +1,95 @@
 #include "pch.h"
 #include "inputs.h"
+#include "ecs/scene.h"
 #include "application.h"
 #include "events/system.h"
-#include "scene/scene_serializer.h"
 
-namespace fuse::application {
-  static scene_instance* scene = NULL;
+namespace fuse {
   static float deltatime, last_tick; 
+  static ecs::scene* scene = NULL;
   static bool is_running = true;
-  static app_configs cfg;
+  static app_config config;
 
-  void compute_deltatime() {
-    float current_tick = (float)get_ticks_sec();
+  FUSE_INLINE void compute_deltatime() {
+    float current_tick = (float)get_ticks();
     deltatime = (current_tick - last_tick);
     last_tick = current_tick;    
   }
 
-  bool on_quit(const quit_event&) { 
+  FUSE_INLINE bool on_quit(const quit_event& e) { 
     return is_running = false; 
   }
 
-  bool on_keydown(const keydown_event& e) { 
-    if(inputs::is_pressed(SDL_SCANCODE_LCTRL)) {
-      // serialize
-      if(e.key == SDL_SCANCODE_S) {
-        scene_serializer(scene).serialize("scene.yaml");
-      }
+  void run_application(const app_config& cfg) {
+    // set config
+    config = cfg;
 
-      // deserialize
-      if(e.key == SDL_SCANCODE_O) {
-        scene_serializer(scene).deserialize("scene.yaml");
-      }
-    }
-    return false;
-  }
-
-  void run() {
+    // init SDL's systems
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-      FUSE_ERROR("SDL_Init failed: %s", SDL_GetError());
+      FUSE_ERROR("%s", SDL_GetError());
       exit(EXIT_FAILURE);
+    }
+    // init SDL_image
+    if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG) < 0) {
+      FUSE_ERROR("%s", IMG_GetError());
+    }
+    // init SDL_ttf
+    if(TTF_Init() < 0) { 
+      FUSE_ERROR("%s", TTF_GetError());         
+    }
+    // init SDL_mixer
+    if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG) < 0 || 
+      Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 512)) {
+      FUSE_ERROR("%s", Mix_GetError());
     }
 
     // create window
     auto w_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow(cfg.title.c_str(), SDL_WINDOWPOS_CENTERED, 
-    SDL_WINDOWPOS_CENTERED, cfg.width, cfg.height, w_flags);
+    SDL_Window* window = SDL_CreateWindow(config.title.c_str(), SDL_WINDOWPOS_CENTERED, 
+    SDL_WINDOWPOS_CENTERED, config.width, config.height, w_flags);
     if (!window) {
-      FUSE_ERROR("SDL_CreateWindow failed: %s", SDL_GetError());
+      FUSE_ERROR("%s", SDL_GetError());
       exit(EXIT_FAILURE);
     }
 
-    // create renderer context
+    // create renderer 
     auto r_flags = (SDL_RendererFlags)(SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, r_flags);
     if (!renderer) {
-      FUSE_ERROR("SDL_CreateRenderer failed: %s", SDL_GetError());
+      FUSE_ERROR("%s", SDL_GetError());
       exit(EXIT_FAILURE);
     }
+    
+    // initialize inputs
+    inputs::initialize(window);
 
-    // register callbacks
-    auto disp = inputs::get_dispatcher();
+    // register event callbacks
+    auto disp = inputs::get_disp();
     disp->add_callback<quit_event>(on_quit);
-    disp->add_callback<keydown_event>(on_keydown);
 
-    // create scene
-    scene = new scene_instance(renderer, disp);
-    scene->start();
+    // create & load scene
+    scene = new ecs::scene(renderer);
+    scene->deserialize(config.scenepath);
 
-    last_tick = (float)get_ticks_sec();
+    // start time 
+    last_tick = (float)get_ticks();
 
+    // game loop
     while (is_running) { 
       compute_deltatime();
-      inputs::process_events();  
+      inputs::dispatch_events();  
       SDL_RenderClear(renderer);     
       scene->update(deltatime);  
       SDL_RenderPresent(renderer);
     }
 
+    // free memory
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    FUSE_DELETE(scene);
+    Mix_Quit();
     SDL_Quit();
+    IMG_Quit();
+    TTF_Quit();
   }
 }

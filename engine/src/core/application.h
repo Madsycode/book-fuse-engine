@@ -1,13 +1,16 @@
 #pragma once
 
-namespace fuse::application {
-    struct app_configs {
-        int width = SCREEN_WIDTH;
-        int height = SCREEN_HEIGHT;       
-        std::string title = "Fuse2D";
-        std::string version = "0.0.1";
-        std::string scenepath = "scene.yaml";
+namespace fuse {
+    struct app_config {
+      int width = 0;
+      int height = 0;       
+      std::string title;
+      std::string version;
+      std::string scenepath;
     };
 
-    FUSE_API void run();  
+    // will be defined in game.exe
+    app_config create_application();
+
+    FUSE_API void run_application(const app_config&);  
 }

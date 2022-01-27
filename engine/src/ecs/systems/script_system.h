@@ -14,7 +14,7 @@ namespace fuse::ecs {
       for (auto& e : _registry->view<script_component>()) {
         auto& script = _registry->get_component<script_component>(e);
         script_props props(e, _registry, _assets);
-        script.instance = script.allocate(props);
+        script.instance = script.instantiate(props);
         script.instance->on_start();
       }
     }

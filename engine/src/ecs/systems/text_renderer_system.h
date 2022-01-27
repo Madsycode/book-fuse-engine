@@ -9,7 +9,7 @@ namespace fuse::ecs {
         auto& tx = _registry->get_component<text_component>(entity);
 
         // get font from asset registry
-        auto& font = _assets->get<font_asset>(tx.font)->font;
+        auto& font = _assets->get<font_asset>(tx.font)->instance;
         
         // create text surface
         SDL_Surface *surface = NULL;

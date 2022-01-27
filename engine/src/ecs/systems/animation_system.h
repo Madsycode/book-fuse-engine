@@ -9,9 +9,9 @@ namespace fuse::ecs {
         auto& an = _registry->get_component<animation_component>(entity);
 
         // get animation from assets
-        auto& anim = _assets->get<animation_asset>(an.animation)->animation;
+        auto& anim = _assets->get<animation_asset>(an.animation)->instance;
         int index = (get_ticks_ms()/anim.speed) % anim.frames.size();
-        auto& frame = _assets->get<texture_asset>(anim.frames[index])->texture;
+        auto& frame = _assets->get<texture_asset>(anim.frames[index])->instance;
 
         // destination viewport
         SDL_FRect dst_rect = { 

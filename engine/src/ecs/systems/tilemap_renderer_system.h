@@ -7,7 +7,7 @@ namespace fuse::ecs {
       for (auto& entity : _registry->view<tilemap_component>()) {
         auto& tr = _registry->get_component<transform_component>(entity).transform;
         auto& id = _registry->get_component<tilemap_component>(entity).tilemap;
-        auto& tilemap = _assets->get<tilemap_asset>(id)->tilemap;
+        auto& tilemap = _assets->get<tilemap_asset>(id)->instance;
 
         // render current tilemap's tiles
         for (auto& t_entity : _registry->view<tile_component>()) {
@@ -28,7 +28,7 @@ namespace fuse::ecs {
     FUSE_INLINE void draw_tile(asset_id tileset_id, float x, float y, int row, int col, int size, SDL_RendererFlip flip) {
       SDL_FRect dst_rect = { x * size, y * size, size, size};
       SDL_Rect src_rect = { row * size, col * size, size, size };
-      auto& tileset = _assets->get<texture_asset>(tileset_id)->texture;
+      auto& tileset = _assets->get<texture_asset>(tileset_id)->instance;
       SDL_RenderCopyExF(_renderer, tileset.data, &src_rect, &dst_rect, 0, NULL, flip);
       // render rectangle
       SDL_RenderDrawRectF(_renderer, &dst_rect);

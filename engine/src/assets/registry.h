@@ -66,7 +66,7 @@ namespace fuse {
     }  
 
     FUSE_INLINE audio_asset* import_audio(const std::string& path, const std::string& name) {
-        audio_instance audio;
+        audio audio;
         audio.data = Mix_LoadWAV(path.c_str());
         audio.filename = path;
 

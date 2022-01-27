@@ -5,7 +5,7 @@
 namespace fuse {
   struct scrolling_ground : script_instance {
     FUSE_INLINE void on_start() {
-      width = get_asset<texture_asset>("ground")->texture.width;
+      width = get_asset<texture_asset>("ground")->instance.width;
     }
 
     FUSE_INLINE void on_update(float dt) {    

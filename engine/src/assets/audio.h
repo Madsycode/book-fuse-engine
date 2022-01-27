@@ -3,23 +3,23 @@
 #include "asset.h"
 
 namespace fuse {
-  struct audio_instance {
+  struct audio {
     Mix_Chunk* data = NULL;
     std::string filename;
   };
 
   struct audio_asset : asset {
-    FUSE_INLINE audio_asset(const std::string& name, const audio_instance& audio) {
-      this->audio = audio;
+    FUSE_INLINE audio_asset(const std::string& name, const audio& data) {
+      this->instance = data;
       this->name = name;
     }
 
     FUSE_INLINE audio_asset() = default;
 
     FUSE_INLINE ~audio_asset() {
-      Mix_FreeChunk(audio.data);
+      Mix_FreeChunk(instance.data);
     }
 
-    audio_instance audio;
+    audio instance;
   };
 }

@@ -59,12 +59,12 @@ namespace fuse {
 				em << YAML::BeginMap;
 				em << YAML::Key << "id" << YAML::Value << asset->id;
 				em << YAML::Key << "name" << YAML::Value << asset->name;
-				em << YAML::Key << "speed" << YAML::Value << asset->animation.speed;
+				em << YAML::Key << "speed" << YAML::Value << asset->instance.speed;
 
         // serialize frames
-        for(int i = 0; i < asset->animation.frames.size(); i++) {
+        for(int i = 0; i < asset->instance.frames.size(); i++) {
           auto temp = "frame" + std::to_string(i);
-          em << YAML::Key << temp << YAML::Value << asset->animation.frames[i];
+          em << YAML::Key << temp << YAML::Value << asset->instance.frames[i];
         }
 				em << YAML::EndMap;
 			}
@@ -77,7 +77,7 @@ namespace fuse {
 				em << YAML::BeginMap;
 				em << YAML::Key << "id" << YAML::Value << asset->id;
 				em << YAML::Key << "name" << YAML::Value << asset->name;
-				em << YAML::Key << "source" << YAML::Value << asset->texture.filename;
+				em << YAML::Key << "source" << YAML::Value << asset->instance.filename;
 				em << YAML::EndMap;
 			}
 		} 
@@ -89,7 +89,7 @@ namespace fuse {
 				em << YAML::BeginMap;
 				em << YAML::Key << "id" << YAML::Value << asset->id;
 				em << YAML::Key << "name" << YAML::Value << asset->name;
-				em << YAML::Key << "source" << YAML::Value << asset->audio.filename;
+				em << YAML::Key << "source" << YAML::Value << asset->instance.filename;
 				em << YAML::EndMap;
 			}
 		} 
@@ -101,8 +101,8 @@ namespace fuse {
 				em << YAML::BeginMap;
 				em << YAML::Key << "id" << YAML::Value << asset->id;
 				em << YAML::Key << "name" << YAML::Value << asset->name;
-				em << YAML::Key << "size" << YAML::Value << asset->font.size;
-				em << YAML::Key << "source" << YAML::Value << asset->font.filename;        
+				em << YAML::Key << "size" << YAML::Value << asset->instance.size;
+				em << YAML::Key << "source" << YAML::Value << asset->instance.filename;        
 				em << YAML::EndMap;
 			}
 		}   
@@ -132,10 +132,10 @@ namespace fuse {
           if(!data[temp]) { break; }
 
           auto frame = data[temp].as<asset_id>();
-          asset->animation.frames.push_back(frame);                  
+          asset->instance.frames.push_back(frame);                  
           i++;
         }
-        asset->animation.speed = data["speed"].as<int>();        
+        asset->instance.speed = data["speed"].as<int>();        
         asset->id = data["id"].as<asset_id>();
 			}
 		}

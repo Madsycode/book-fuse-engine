@@ -62,8 +62,8 @@ namespace fuse {
       cl.collider = { 
         tr.transform.translate.x,
         tr.transform.translate.y,
-        (float)pipe_sprite->texture.width,
-        (float)pipe_sprite->texture.height 
+        (float)pipe_sprite->instance.width,
+        (float)pipe_sprite->instance.height 
       };     
       pipes.push_back(pipe);         
     }

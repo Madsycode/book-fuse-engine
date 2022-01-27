@@ -9,7 +9,7 @@ namespace fuse::ecs {
         auto& sp = _registry->get_component<sprite_component>(entity);
 
         // get texture from asset_registry
-        auto& sprite = _assets->get<texture_asset>(sp.sprite)->texture;
+        auto& sprite = _assets->get<texture_asset>(sp.sprite)->instance;
 
         SDL_FRect dst_rect{
           tr.translate.x, tr.translate.y,

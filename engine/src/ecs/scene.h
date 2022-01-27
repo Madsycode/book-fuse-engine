@@ -75,12 +75,12 @@ namespace fuse::ecs {
 
       // add player fly animation
       auto fly_a = _assets.add<animation_asset>("fly");
-      fly_a->animation.frames.push_back(fly1->id);                       
-      fly_a->animation.frames.push_back(fly2->id);                       
+      fly_a->instance.frames.push_back(fly1->id);                       
+      fly_a->instance.frames.push_back(fly2->id);                       
 
       // add player hurt animation
       auto hurt_a = _assets.add<animation_asset>("hurt");
-      hurt_a->animation.frames.push_back(hurt->id);  
+      hurt_a->instance.frames.push_back(hurt->id);  
 
       // add player entity
       auto player = add_entity("player");
@@ -117,7 +117,7 @@ namespace fuse::ecs {
       auto& gd_sp = ground.add_component<sprite_component>(); 
       gd_sp.sprite = gd->id;
       auto& gd_cl =ground.add_component<collider_component>();
-      gd_cl.collider = { 0, 0, (float)gd->texture.width, (float)gd->texture.height };
+      gd_cl.collider = { 0, 0, (float)gd->instance.width, (float)gd->instance.height };
       
       // score text entity
       auto score = add_entity("score");     

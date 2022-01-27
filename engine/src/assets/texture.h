@@ -11,16 +11,16 @@ namespace fuse {
 
   struct texture_asset : asset {
     FUSE_INLINE texture_asset(const std::string& name, const texture& data) {
-      this->texture = data;
+      this->instance = data;
       this->name = name;
     }
 
     FUSE_INLINE texture_asset() = default;
 
     FUSE_INLINE ~texture_asset() { 
-      SDL_DestroyTexture(texture.data);
+      SDL_DestroyTexture(instance.data);
     }
 
-    texture texture;
+    texture instance;
   };
 }

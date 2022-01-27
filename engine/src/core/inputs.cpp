@@ -15,7 +15,7 @@ namespace fuse::inputs {
     dispatcher* get_disp() { return &disp; }
     const vec2f& mouse_wheel() { return mouse.wheel; }
     const vec2f& mouse_offset() { return mouse.offset; }
-    const vec2f& display_size() { return vec2f(display_w, display_h); }
+    vec2f display_size() { return vec2f(display_w, display_h); }
 
     bool is_key(int key) { return keyboard[key]; }
     bool is_button(int b) { return mouse.buttons.test(b); }

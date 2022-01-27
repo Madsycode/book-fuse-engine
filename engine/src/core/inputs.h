@@ -9,9 +9,9 @@ namespace fuse::inputs {
     vec2f wheel;
   };
 
-  FUSE_API const vec2f& mouse_wheel();
   FUSE_API const vec2f& mouse_offset();
-  FUSE_API const vec2f& display_size();
+  FUSE_API const vec2f& mouse_wheel();
+  FUSE_API vec2f display_size();
 
   FUSE_API bool is_button(int);
   FUSE_API bool is_key(int);

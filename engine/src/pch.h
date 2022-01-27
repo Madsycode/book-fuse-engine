@@ -77,7 +77,7 @@
 #endif
 
 // free allocated memory and sets it to null pointer
-#define FUSE_DELETE(pointer) if (pointer != NULL) { delete (pointer); }
+#define FUSE_DELETE(m) if (m != NULL) { delete (m); m = NULL; }
 
 // attach lamda function to function call
 #define FUSE_BIND(f) [this](auto&&... args)->decltype(auto) \

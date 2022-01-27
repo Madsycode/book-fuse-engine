@@ -8,7 +8,8 @@ namespace fuse {
 
     FUSE_INLINE bool deserialize(YAML::Node& asset_nodes, SDL_Renderer* target) {
       _assets->clear();  
-      for(auto& node : asset_nodes) {        
+      YAML::Node nodes = asset_nodes;
+      for(auto node : nodes) {        
         deserialize_texture(node, target);
         deserialize_animation(node);
         deserialize_audio(node);
@@ -108,8 +109,8 @@ namespace fuse {
     // ++
 
     // deserialize animation_asset
-    FUSE_INLINE void deserialize_animation(YAML::Node& node) {
-			if (auto& data = node["animation"]) {
+    FUSE_INLINE void deserialize_animation(YAML::Node node) {
+			if (const auto data = node["animation"]) {
         auto name = data["name"].as<std::string>();
         auto asset = _assets->add<animation_asset>(name);
 
@@ -129,8 +130,8 @@ namespace fuse {
 		}
 
     // deserialize texture_asset
-    FUSE_INLINE void deserialize_texture(YAML::Node& node, SDL_Renderer* target) {
-			if (auto& data = node["texture"]) {
+    FUSE_INLINE void deserialize_texture(YAML::Node node, SDL_Renderer* target) {
+			if (auto data = node["texture"]) {
         auto source = data["source"].as<std::string>();
         auto name = data["name"].as<std::string>();
         auto asset = _assets->import_texture(source, name, target);
@@ -139,8 +140,8 @@ namespace fuse {
 		}
 
     // deserialize audio_asset
-    FUSE_INLINE void deserialize_audio(YAML::Node& node) {
-			if (auto& data = node["audio"]) {
+    FUSE_INLINE void deserialize_audio(YAML::Node node) {
+			if (auto data = node["audio"]) {
         auto name = data["name"].as<std::string>();
         auto source = data["source"].as<std::string>();
         auto asset = _assets->import_audio(source, name);
@@ -149,8 +150,8 @@ namespace fuse {
 		}
 
     // deserialize font_asset
-    FUSE_INLINE void deserialize_font(YAML::Node& node) {
-			if (auto& data = node["font"]) {
+    FUSE_INLINE void deserialize_font(YAML::Node node) {
+			if (auto data = node["font"]) {
         auto size = data["size"].as<int>();
         auto name = data["name"].as<std::string>();
         auto source = data["source"].as<std::string>();

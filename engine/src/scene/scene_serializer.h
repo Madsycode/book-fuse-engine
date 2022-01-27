@@ -18,7 +18,7 @@ namespace fuse {
       }  
 
       // deserialize assets
-      if(auto& asset_nodes = root["assets"]) {
+      if(auto asset_nodes = root["assets"]) {
         asset_serializer asz(&_scene->_assets);
         asz.deserialize(asset_nodes, _scene->_renderer);
       }
@@ -27,8 +27,8 @@ namespace fuse {
       _scene->_registry.clear();
 
       // deserialize entities
-      if(auto& entity_nodes = root["entities"]) {
-        for(auto& node : entity_nodes) {
+      if(auto entity_nodes = root["entities"]) {
+        for(auto node : entity_nodes) {
           ecs::entity entity(&_scene->_registry);          
           deserialize_info(node, entity);
           deserialize_transform(node, entity);
@@ -192,8 +192,8 @@ namespace fuse {
     // ++
 
     // deserialize info_component
-    FUSE_INLINE void deserialize_info(YAML::Node& node, ecs::entity& e) {
-			if (auto& data = node["info_component"]) {
+    FUSE_INLINE void deserialize_info(YAML::Node node, ecs::entity& e) {
+			if (auto data = node["info_component"]) {
         auto& i = e.add_component<ecs::info_component>();
         i.name = data["name"].as<std::string>();
         i.tag = data["tag"].as<std::string>();
@@ -202,8 +202,8 @@ namespace fuse {
 		}
 
     // deserialize transform_component
-    FUSE_INLINE void deserialize_transform(YAML::Node& node, ecs::entity& e) {
-			if (auto& data = node["transform_component"]) {
+    FUSE_INLINE void deserialize_transform(YAML::Node node, ecs::entity& e) {
+			if (auto data = node["transform_component"]) {
         auto& t = e.add_component<ecs::transform_component>();
         t.transform.translate = data["translate"].as<vec2f>();
         t.transform.rotation = data["rotation"].as<float>();
@@ -212,8 +212,8 @@ namespace fuse {
 		}
 
     // deserialize rigidbody_component
-    FUSE_INLINE void deserialize_rigidbody(YAML::Node& node, ecs::entity& e) {
-			if (auto& data = node["rigidbody_component"]) {
+    FUSE_INLINE void deserialize_rigidbody(YAML::Node node, ecs::entity& e) {
+			if (auto data = node["rigidbody_component"]) {
         auto& r = e.add_component<ecs::rigidbody_component>();
         r.body.gravity_scale = data["gravity"].as<float>();
         r.body.velocity = data["velocity"].as<vec2f>();
@@ -223,8 +223,8 @@ namespace fuse {
 		}
 
     // deserialize collider_component
-    FUSE_INLINE void deserialize_collider(YAML::Node& node, ecs::entity& e) {
-			if (auto& data = node["collider_component"]) {
+    FUSE_INLINE void deserialize_collider(YAML::Node node, ecs::entity& e) {
+			if (auto data = node["collider_component"]) {
         auto& c = e.add_component<ecs::collider_component>();
         c.collider.w = data["width"].as<float>();
         c.collider.h = data["height"].as<float>();
@@ -233,8 +233,8 @@ namespace fuse {
 		}
 
     // deserialize sprite_component
-    FUSE_INLINE void deserialize_sprite(YAML::Node& node, ecs::entity& e) {
-			if (auto& data = node["sprite_component"]) {
+    FUSE_INLINE void deserialize_sprite(YAML::Node node, ecs::entity& e) {
+			if (auto data = node["sprite_component"]) {
         auto& s = e.add_component<ecs::sprite_component>();
         s.flip = (SDL_RendererFlip)data["flip"].as<int>();
         s.sprite = data["sprite"].as<asset_id>();
@@ -242,16 +242,16 @@ namespace fuse {
 		}
 
     // deserialize audio_component
-    FUSE_INLINE void deserialize_audio(YAML::Node& node, ecs::entity& e) {
-			if (auto& data = node["audio_component"]) {
+    FUSE_INLINE void deserialize_audio(YAML::Node node, ecs::entity& e) {
+			if (auto data = node["audio_component"]) {
         auto& a = e.add_component<ecs::audio_component>();
         a.audio = data["audio"].as<asset_id>();      
 			}
 		}
     
     // deserialize animation_component
-    FUSE_INLINE void deserialize_animation(YAML::Node& node, ecs::entity& e) {
-			if (auto& data = node["animation_component"]) {
+    FUSE_INLINE void deserialize_animation(YAML::Node node, ecs::entity& e) {
+			if (auto data = node["animation_component"]) {
         auto& a = e.add_component<ecs::animation_component>();
         a.flip = (SDL_RendererFlip)data["flip"].as<int>();
         a.animation = data["animation"].as<asset_id>();
@@ -259,8 +259,8 @@ namespace fuse {
 		}
 
     // deserialize text_component
-    FUSE_INLINE void deserialize_text(YAML::Node& node, ecs::entity& e) {
-			if (auto& data = node["text_component"]) {
+    FUSE_INLINE void deserialize_text(YAML::Node node, ecs::entity& e) {
+			if (auto data = node["text_component"]) {
         auto& t = e.add_component<ecs::text_component>();
         t.flip = (SDL_RendererFlip)data["flip"].as<int>();
         t.color.r = data["R"].as<unsigned char>();

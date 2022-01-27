@@ -27,6 +27,7 @@ namespace fuse::inputs {
 
     void dispatch_events() {
       static SDL_Event event;
+      
       while (SDL_PollEvent(&event)) {
         switch (event.type) {
         case SDL_QUIT: disp.post<quit_event>(); break;
@@ -67,7 +68,8 @@ namespace fuse::inputs {
               display_h = event.window.data2;
               disp.post<resized_event>(display_w, display_h);
             }
-          } break; 
+          } 
+          break; 
         }
       }
       disp.dispatch();

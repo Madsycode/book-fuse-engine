@@ -47,12 +47,12 @@ namespace fuse::ecs {
       // update registered systems
       for (auto& sys : _systems) { sys->update(dt); }
 
-      // render colliders
-      SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-      for(auto& e : _registry.view<collider_component>()) {
-        auto& cl = _registry.get_component<collider_component>(e);
-        SDL_RenderDrawRectF(_renderer, &cl.collider);
-      }
+      // // render colliders
+      // SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+      // for(auto& e : _registry.view<collider_component>()) {
+      //   auto& cl = _registry.get_component<collider_component>(e);
+      //   SDL_RenderDrawRectF(_renderer, &cl.collider);
+      // }
     }
 
     FUSE_INLINE void create_entities() {

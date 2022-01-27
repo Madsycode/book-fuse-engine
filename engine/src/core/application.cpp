@@ -11,9 +11,11 @@ namespace fuse {
   static app_config config;
 
   FUSE_INLINE void compute_deltatime() {
-    float current_tick = (float)get_ticks();
-    deltatime = (current_tick - last_tick);
-    last_tick = current_tick;    
+    deltatime = get_ticks() - last_tick;
+    if(deltatime > MAX_DELTATIME) {
+      deltatime = MAX_DELTATIME;
+    }
+    last_tick = get_ticks();    
   }
 
   FUSE_INLINE bool on_quit(const quit_event& e) { 

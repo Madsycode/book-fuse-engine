@@ -89,6 +89,7 @@
 
 // window size
 #define INVALID_ID 0
+#define MAX_DELTATIME 0.05f
 
 // universal unique id (uuid)
 namespace fuse {

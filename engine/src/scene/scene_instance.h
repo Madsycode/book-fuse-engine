@@ -56,21 +56,21 @@ namespace fuse {
       for (auto& sys : _systems) { sys->start(); }
     }
 
-    FUSE_INLINE void starts() {
+    FUSE_INLINE void start() {
       // load player sprites
-      auto fly1 = _assets.import_texture("resource/fly_1.png", "fly_1", _renderer);
-      auto fly2 = _assets.import_texture("resource/fly_2.png", "fly_2", _renderer);
-      auto hurt = _assets.import_texture("resource/hurt_1.png", "hurt", _renderer);
+      auto fly1 = _assets.import_texture("assets/fly_1.png", "fly_1", _renderer);
+      auto fly2 = _assets.import_texture("assets/fly_2.png", "fly_2", _renderer);
+      auto hurt = _assets.import_texture("assets/hurt_1.png", "hurt", _renderer);
       // load pipe sprite
-      auto pipe = _assets.import_texture("resource/pipe.png", "pipe", _renderer);
+      auto pipe = _assets.import_texture("assets/pipe.png", "pipe", _renderer);
       // load bg texture
-      auto gd = _assets.import_texture("resource/ground.png", "ground", _renderer);
-      auto bg = _assets.import_texture("resource/bg1.png", "bg", _renderer);
+      auto gd = _assets.import_texture("assets/ground.png", "ground", _renderer);
+      auto bg = _assets.import_texture("assets/bg1.png", "bg", _renderer);
       // load text font 
-      auto font = _assets.import_font("resource/font.ttf", "font", 30);
+      auto font = _assets.import_font("assets/font.ttf", "font", 30);
       // load sound effects
-      auto music = _assets.import_audio("resource/song.mp3", "music");
-      auto boom = _assets.import_audio("resource/boom.wav", "boom");
+      auto music = _assets.import_audio("assets/song.mp3", "music");
+      auto boom = _assets.import_audio("assets/boom.wav", "boom");
 
       // add player fly animation
       auto fly_a = _assets.add<animation_asset>("fly");

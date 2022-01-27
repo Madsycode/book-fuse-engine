@@ -1,0 +1,129 @@
+assets:
+  - animation:
+      id: 3001328765460486836
+      name: fly
+      speed: 100
+      frame0: 3153075052308735658
+      frame1: 3390047466586871798
+  - animation:
+      id: 14068658587267860180
+      name: hurt
+      speed: 100
+      frame0: 6429827260042882703
+  - texture:
+      id: 3153075052308735658
+      name: fly_1
+      source: assets/fly_1.png
+  - texture:
+      id: 3390047466586871798
+      name: fly_2
+      source: assets/fly_2.png
+  - texture:
+      id: 6429827260042882703
+      name: hurt
+      source: assets/hurt_1.png
+  - texture:
+      id: 1644700362559708964
+      name: pipe
+      source: assets/pipe.png
+  - texture:
+      id: 9481909148788738300
+      name: ground
+      source: assets/ground.png
+  - texture:
+      id: 8856103368483127438
+      name: bg
+      source: assets/bg1.png
+  - audio:
+      id: 7607125718020449848
+      name: music
+      source: assets/song.mp3
+  - audio:
+      id: 1607378452734678896
+      name: boom
+      source: assets/boom.wav
+  - font:
+      id: 106689022052051438
+      name: font
+      size: 30
+      source: assets/font.ttf
+entities:
+  - info_component:
+      uuid: 14633014385540396310
+      name: player
+      tag: default
+    transform_component:
+      translate: [126, 421.599915]
+      rotation: 0
+      scale: [0.150000006, 0.150000006]
+    rigidbody_component:
+      gravity: 25
+      velocity: [0, 171.500015]
+      disabled: false
+      force: [0, 0]
+    collider_component:
+      width: 58
+      height: 38
+      disabled: false
+    animation_component:
+      animation: 3001328765460486836
+      flip: 0
+    audio_component:
+      audio: 1607378452734678896
+  - info_component:
+      uuid: 1592099269323618844
+      name: background
+      tag: default
+    transform_component:
+      translate: [-5, -5]
+      rotation: 0
+      scale: [1, 1]
+    sprite_component:
+      sprite: 8856103368483127438
+      flip: 0
+  - info_component:
+      uuid: 10453089675006330818
+      name: ground
+      tag: default
+    transform_component:
+      translate: [-70.0000153, 620]
+      rotation: 0
+      scale: [1, 1]
+    rigidbody_component:
+      gravity: 0
+      velocity: [-100, 0]
+      disabled: false
+      force: [0, 0]
+    collider_component:
+      width: 711
+      height: 265
+      disabled: false
+    sprite_component:
+      sprite: 9481909148788738300
+      flip: 0
+  - info_component:
+      uuid: 8036310431760176487
+      name: score
+      tag: default
+    transform_component:
+      translate: [120, 20]
+      rotation: 0
+      scale: [1, 1]
+    text_component:
+      R: 255
+      G: 255
+      B: 255
+      A: 255
+      text: "Score: 0"
+      font: 106689022052051438
+      flip: 0
+  - info_component:
+      uuid: 12421924984798225775
+      name: game
+      tag: default
+    transform_component:
+      translate: [0, 0]
+      rotation: 0
+      scale: [1, 1]
+    audio_component:
+      audio: 7607125718020449848

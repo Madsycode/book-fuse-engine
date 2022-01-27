@@ -263,12 +263,12 @@ namespace fuse {
 			if (auto data = node["text_component"]) {
         auto& t = e.add_component<ecs::text_component>();
         t.flip = (SDL_RendererFlip)data["flip"].as<int>();
-        t.color.r = data["R"].as<unsigned char>();
-        t.color.g = data["G"].as<unsigned char>();
-        t.color.b = data["B"].as<unsigned char>();
-        t.color.a = data["A"].as<unsigned char>();
         t.text = data["text"].as<std::string>();        
         t.font = data["font"].as<asset_id>();
+        t.color.r = data["R"].as<int>();
+        t.color.g = data["G"].as<int>();
+        t.color.b = data["B"].as<int>();
+        t.color.a = data["A"].as<int>();
 			}
 		}
 

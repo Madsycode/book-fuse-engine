@@ -1,13 +1,19 @@
 #!/bin/bash
 clear;
 
-if [ ! -d build ]
-then
-    mkdir build
+# check build dir
+if [ ! -d build ] 
+then 
+    mkdir build 
 fi
 
-cd build
-cmake -O .. -B . -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON
-cmake --build . 
+# copy assets files to output dir
+cp -R "./resource"  "./build/bin/"
 
-echo done!
+# generate cmake files
+cmake -O . -B ./build -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON
+
+# compile project
+cd build && cmake --build . 
+
+echo compilation finished!

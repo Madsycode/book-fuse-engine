@@ -8,13 +8,13 @@ namespace fuse::ecs {
       for (auto& [_, a] : _components) { FUSE_DELETE(a); }
       _components.clear();
       _signatures.clear();
+      _nextid = INVALID_ID;
     }
 
     FUSE_INLINE entity_id add_entity() {
-      static entity_id _nextid = INVALID_ID;
-      _nextid++;
-      _signatures[_nextid] = signature();
-      return _nextid;
+      entity_id entity = _nextid++;
+      _signatures[entity] = signature();
+      return entity;
     }
 
     FUSE_INLINE void destroy(entity_id entity) {
@@ -81,5 +81,6 @@ namespace fuse::ecs {
   private:
     std::unordered_map<type_id, array_instance*> _components;
     std::unordered_map<entity_id, signature> _signatures;
+    entity_id _nextid = INVALID_ID;
   };
 }

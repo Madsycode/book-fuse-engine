@@ -3,6 +3,6 @@
 #include "application.h"
 
 int main(int argc, char** argv) {   
-    fuse::start_application();
+    fuse::application::run();
     return 0;
 }

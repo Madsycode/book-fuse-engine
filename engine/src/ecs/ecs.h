@@ -3,13 +3,12 @@
 #include "core/typeid.h"
 
 namespace fuse::ecs {
-  	
   // type definitions
-	using entity_id = unsigned int; 
+	using entity_id = size_t; 
 	using signature = std::set<type_id>; 
 	using entity_list = std::set<entity_id>; 
 
-  // component array data-entry
+  // component array entry
 	template<typename T>
 	struct component_entry {
 		FUSE_INLINE component_entry(entity_id e, const T& d): entity(e), data(d) {}

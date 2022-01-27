@@ -2,20 +2,24 @@
 #include "asset_instance.h"
 
 namespace fuse {
+  struct font_instance {
+    TTF_Font* data = NULL;
+    std::string filename;
+    int size = 20;
+  };
+
   struct font_asset : asset_instance {
-    FUSE_INLINE font_asset(const std::string& path, const std::string& name, TTF_Font* font) {
-      this->id = generate_uuid();
+    FUSE_INLINE font_asset(const std::string& name, const font_instance& font) {
       this->font = font;
       this->name = name;
-      this->path = path;
     }
 
     FUSE_INLINE font_asset() = default;
 
     FUSE_INLINE ~font_asset() {
-      TTF_CloseFont(font);
+      TTF_CloseFont(font.data);
     }
 
-    TTF_Font* font = NULL;
+    font_instance font;
   };
 }

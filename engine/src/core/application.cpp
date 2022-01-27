@@ -2,12 +2,13 @@
 #include "inputs.h"
 #include "application.h"
 #include "events/system.h"
-#include "scene/scene_instance.h"
+#include "scene/scene_serializer.h"
 
-namespace fuse {
-  static bool is_running = true;
-  static app_configuration config;
+namespace fuse::application {
+  static scene_instance* scene = NULL;
   static float deltatime, last_tick; 
+  static bool is_running = true;
+  static app_configs cfg;
 
   void compute_deltatime() {
     float current_tick = (float)get_ticks_sec();
@@ -19,8 +20,22 @@ namespace fuse {
     return is_running = false; 
   }
 
-  void start_application() {
-    // init sdl systems
+  bool on_keydown(const keydown_event& e) { 
+    if(inputs::is_pressed(SDL_SCANCODE_LCTRL)) {
+      // serialize
+      if(e.key == SDL_SCANCODE_S) {
+        scene_serializer(scene).serialize("scene.yaml");
+      }
+
+      // deserialize
+      if(e.key == SDL_SCANCODE_O) {
+        scene_serializer(scene).deserialize("scene.yaml");
+      }
+    }
+    return false;
+  }
+
+  void run() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
       FUSE_ERROR("SDL_Init failed: %s", SDL_GetError());
       exit(EXIT_FAILURE);
@@ -28,7 +43,8 @@ namespace fuse {
 
     // create window
     auto w_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow(config.name, config.start_x, config.start_y, config.width, config.height, w_flags);
+    SDL_Window* window = SDL_CreateWindow(cfg.title.c_str(), SDL_WINDOWPOS_CENTERED, 
+    SDL_WINDOWPOS_CENTERED, cfg.width, cfg.height, w_flags);
     if (!window) {
       FUSE_ERROR("SDL_CreateWindow failed: %s", SDL_GetError());
       exit(EXIT_FAILURE);
@@ -45,9 +61,10 @@ namespace fuse {
     // register callbacks
     auto disp = inputs::get_dispatcher();
     disp->add_callback<quit_event>(on_quit);
+    disp->add_callback<keydown_event>(on_keydown);
 
     // create scene
-    auto scene = new scene_instance(renderer, disp);
+    scene = new scene_instance(renderer, disp);
     scene->start();
 
     last_tick = (float)get_ticks_sec();

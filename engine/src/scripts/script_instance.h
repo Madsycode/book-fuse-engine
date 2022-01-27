@@ -78,10 +78,10 @@ namespace fuse {
         return _assets->get<T>(name);
       }
 
-      FUSE_INLINE void play_audio(asset_id id, int vol, int loops = 0) {
-        auto& audio = _assets->get<audio_asset>(id)->audio;
-        Mix_VolumeChunk(audio, vol);                
-        Mix_PlayChannel(-1, audio, loops);     
+      FUSE_INLINE void play_audio(asset_id id, int loops = 0, int vol = 0) {
+        auto& chunck = _assets->get<audio_asset>(id)->audio.data;
+        Mix_VolumeChunk(chunck, vol);                
+        Mix_PlayChannel(-1, chunck, loops);     
       }
       
   private:

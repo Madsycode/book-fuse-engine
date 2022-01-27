@@ -11,7 +11,7 @@ add_definitions(-D_DEBUG)
 
 # windows
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} SDL2 SDL2main SDL2_image SDL2_ttf SDL2_mixer)
+    target_link_libraries(${PROJECT_NAME} SDL2 SDL2main SDL2_image SDL2_ttf SDL2_mixer yaml-cppd)
     target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/dependencies/libs/windows)
 endif (WIN32)
 

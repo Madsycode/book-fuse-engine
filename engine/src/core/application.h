@@ -1,14 +1,13 @@
 #pragma once
 
-namespace fuse {
-    struct app_configuration {
-        const char* name = "Fuse2D";
-        const char* version = "0.0.1";
+namespace fuse::application {
+    struct app_configs {
         int width = SCREEN_WIDTH;
-        int height = SCREEN_HEIGHT;
-        int start_x = SDL_WINDOWPOS_CENTERED;
-        int start_y = SDL_WINDOWPOS_CENTERED;        
+        int height = SCREEN_HEIGHT;       
+        std::string title = "Fuse2D";
+        std::string version = "0.0.1";
+        std::string scenepath = "scene.yaml";
     };
 
-    FUSE_API void start_application();  
+    FUSE_API void run();  
 }

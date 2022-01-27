@@ -74,56 +74,62 @@ namespace fuse {
     }  
 
     template <typename T>
-    FUSE_INLINE T* add(const std::string& path, const std::string& name) {
+    FUSE_INLINE T* add(const std::string& name) {
       auto asset = new T();
-      asset->id = generate_uuid();
-      asset->path = path;
       asset->name = name;
       _data[get_typeid<T>()].push_back(asset);
       return asset;
     }  
 
-    FUSE_INLINE font_asset* load_font(const std::string& path, const std::string& name, int size) {
-        auto font = TTF_OpenFont(path.c_str(), size);
-        if (!font) {
+    FUSE_INLINE audio_asset* import_audio(const std::string& path, const std::string& name) {
+        audio_instance audio;
+        audio.data = Mix_LoadWAV(path.c_str());
+        audio.filename = path;
+
+        if (!audio.data) {
           FUSE_ERROR("%s", IMG_GetError());
           return NULL;
         }
 
-        auto asset = new font_asset(path, name, font);
-        _data[get_typeid<font_asset>()].push_back(asset);
-        return asset;
-      }
-
-    FUSE_INLINE audio_asset* load_audio(const std::string& path, const std::string& name) {
-        auto audio = Mix_LoadWAV(path.c_str());
-        if (!audio) {
-          FUSE_ERROR("%s", IMG_GetError());
-          return NULL;
-        }
-
-        auto asset = new audio_asset(path, name, audio);
+        auto asset = new audio_asset(name, audio);
         _data[get_typeid<audio_asset>()].push_back(asset);
         return asset;
       }
 
-    FUSE_INLINE texture_asset* load_texture(const std::string& path, const std::string& name, SDL_Renderer* target) {
+    FUSE_INLINE font_asset* import_font(const std::string& path, const std::string& name, int size) {
+      font_instance font;
+      font.data = TTF_OpenFont(path.c_str(), size);
+      font.filename = path;
+      font.size = size;
+
+      if (!font.data) {
+        FUSE_ERROR("%s", IMG_GetError());
+        return NULL;
+      }
+
+      auto asset = new font_asset(name, font);
+      _data[get_typeid<font_asset>()].push_back(asset);
+      return asset;
+    }
+
+    FUSE_INLINE texture_asset* import_texture(const std::string& path, const std::string& name, SDL_Renderer* target) {
       texture_instance tx;
-      IMG_LoadTexture(target, path.c_str());
       tx.data = IMG_LoadTexture(target, path.c_str());
+      tx.filename = path;
 
       if (!tx.data) {
         FUSE_ERROR("%s", IMG_GetError());
         return NULL;
-      }
+      }      
       
       SDL_QueryTexture(tx.data, NULL, NULL, &tx.width, &tx.height);
-      auto asset = new texture_asset(path, name, tx);
+      auto asset = new texture_asset(name, tx);
       _data[get_typeid<texture_asset>()].push_back(asset);
       return asset;
     }
 
   private:
+    friend struct asset_serializer;
     std::unordered_map<type_id, asset_list> _data;
   };
 }

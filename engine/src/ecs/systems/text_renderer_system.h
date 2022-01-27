@@ -13,7 +13,7 @@ namespace fuse::ecs {
         
         // create text surface
         SDL_Surface *surface = NULL;
-        surface = TTF_RenderText_Blended(font, tx.text.c_str(), tx.color);
+        surface = TTF_RenderText_Blended(font.data, tx.text.c_str(), tx.color);
         if (!surface) {
           FUSE_ERROR("%s", TTF_GetError());
           continue;

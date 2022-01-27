@@ -1,17 +1,17 @@
 #pragma once
-
 #include "script_instance.h"
 
 namespace fuse {
   struct game_controller : script_instance {
     FUSE_INLINE void on_start() {
-      play_audio(get_component<ecs::audio_component>().audio, 40, -1);
+      play_audio(get_component<ecs::audio_component>().audio, -1);
     }
 
     FUSE_INLINE void on_update(float dt) {
       if(game_over) { 
         for(auto& pipe : pipes) {
           pipe.get_component<ecs::rigidbody_component>().disabled = true;
+          pipe.get_component<ecs::collider_component>().disabled = true;
         }
         return; 
       } 

@@ -11,10 +11,9 @@ namespace fuse {
   };
 
   struct tilemap_asset : asset_instance {
-    FUSE_INLINE tilemap_asset(const std::string& path, const std::string& name, const tilemap_instance& data) {
-      this->id = generate_uuid();
+    FUSE_INLINE tilemap_asset(const std::string& name, const tilemap_instance& data) {
       this->tilemap = data;
-      this->path = path;
+      this->name = name;
     }
 
     FUSE_INLINE tilemap_asset() = default;

@@ -26,8 +26,8 @@ namespace fuse {
     FUSE_INLINE ~scene_instance() {
       for (auto sys : _systems) { FUSE_DELETE(sys); }
       _registry.clear();
-      _systems.clear();
       _assets.clear();
+      _systems.clear();
     }
 
     FUSE_INLINE ecs::entity add_entity(const std::string& name) {
@@ -53,31 +53,33 @@ namespace fuse {
     }
 
     FUSE_INLINE void start() {
+      for (auto& sys : _systems) { sys->start(); }
+    }
+
+    FUSE_INLINE void starts() {
       // load player sprites
-      auto fly1 = _assets.load_texture("resource/fly_1.png", "fly_1", _renderer);
-      auto fly2 = _assets.load_texture("resource/fly_2.png", "fly_2", _renderer);
-      auto hurt = _assets.load_texture("resource/hurt_1.png", "hurt", _renderer);
+      auto fly1 = _assets.import_texture("resource/fly_1.png", "fly_1", _renderer);
+      auto fly2 = _assets.import_texture("resource/fly_2.png", "fly_2", _renderer);
+      auto hurt = _assets.import_texture("resource/hurt_1.png", "hurt", _renderer);
       // load pipe sprite
-      auto pipe = _assets.load_texture("resource/pipe.png", "pipe", _renderer);
+      auto pipe = _assets.import_texture("resource/pipe.png", "pipe", _renderer);
       // load bg texture
-      auto gd = _assets.load_texture("resource/ground.png", "ground", _renderer);
-      auto bg = _assets.load_texture("resource/bg1.png", "bg", _renderer);
+      auto gd = _assets.import_texture("resource/ground.png", "ground", _renderer);
+      auto bg = _assets.import_texture("resource/bg1.png", "bg", _renderer);
       // load text font 
-      auto font = _assets.load_font("resource/font.ttf", "font", 30);
+      auto font = _assets.import_font("resource/font.ttf", "font", 30);
       // load sound effects
-      auto music = _assets.load_audio("resource/song.mp3", "music");
-      auto boom = _assets.load_audio("resource/boom.wav", "boom");
+      auto music = _assets.import_audio("resource/song.mp3", "music");
+      auto boom = _assets.import_audio("resource/boom.wav", "boom");
 
       // add player fly animation
-      auto fly_a = _assets.add<animation_asset>("path", "fly");
+      auto fly_a = _assets.add<animation_asset>("fly");
       fly_a->animation.frames.push_back(fly1->id);                       
       fly_a->animation.frames.push_back(fly2->id);                       
-      fly_a->animation.frame_count = 2;
 
       // add player hurt animation
-      auto hurt_a = _assets.add<animation_asset>("path", "hurt");
+      auto hurt_a = _assets.add<animation_asset>("hurt");
       hurt_a->animation.frames.push_back(hurt->id);  
-      hurt_a->animation.frame_count = 1;
 
       // add player entity
       auto player = add_entity("player");
@@ -138,6 +140,7 @@ namespace fuse {
     }
 
     private:
+      friend struct scene_serializer;
       dispatcher* _dispatcher = NULL;
       SDL_Renderer* _renderer = NULL;
       ecs::system_list _systems;

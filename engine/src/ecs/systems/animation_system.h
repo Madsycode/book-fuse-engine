@@ -10,7 +10,7 @@ namespace fuse::ecs {
 
         // get animation from assets
         auto& anim = _assets->get<animation_asset>(an.animation)->animation;
-        int index = (get_ticks_ms()/anim.speed) % anim.frame_count;
+        int index = (get_ticks_ms()/anim.speed) % anim.frames.size();
         auto& frame = _assets->get<texture_asset>(anim.frames[index])->texture;
 
         // destination viewport

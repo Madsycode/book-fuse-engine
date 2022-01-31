@@ -1,20 +1,15 @@
 {
   "files.associations": {
-    "array": "cpp",
-    "chrono": "cpp",
-    "compare": "cpp",
-    "filesystem": "cpp",
-    "functional": "cpp",
+    "system_error": "cpp",
+    "vector": "cpp",
     "memory": "cpp",
-    "ratio": "cpp",
-    "tuple": "cpp",
+    "unordered_map": "cpp",
+    "bitset": "cpp",
+    "functional": "cpp",
+    "random": "cpp",
     "type_traits": "cpp",
-    "utility": "cpp",
     "xmemory": "cpp",
-    "xstring": "cpp",
-    "xtr1common": "cpp",
-    "xutility": "cpp",
-    "algorithm": "cpp",
-    "locale": "cpp"
+    "xstddef": "cpp",
+    "xstring": "cpp"
   }
 }

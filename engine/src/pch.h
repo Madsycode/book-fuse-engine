@@ -64,6 +64,18 @@
     #define FUSE_STATIC_ASSERT static_assert
 #endif
 
+// function inlining
+#if defined(__clang__) || defined(__gcc__)
+    #define FUSE_INLINE __attribute__((always_inline)) inline
+    #define FUSE_NOINLINE __attribute__((noinline))
+#elif defined(_MSC_VER)
+    #define FUSE_INLINE __forceinline
+    #define FUSE_NOINLINE __declspec(noinline)
+#else
+    #define FUSE_INLINE inline
+    #define FUSE_NOINLINE
+#endif
+
 // free allocated memory and sets it to null pointer
 #define FUSE_DELETE(m) if (m != NULL) { delete (m); m = NULL; }
 

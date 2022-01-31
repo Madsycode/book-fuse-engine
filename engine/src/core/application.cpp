@@ -3,55 +3,67 @@
 #include "application.h"
 #include "events/system.h"
 
+#include "math/vec2.h"
+
 namespace fuse {
   static bool is_running = true;
 
-  bool on_quit(const quit_event&) { 
-    is_running = false; 
-    return true;
+  FUSE_INLINE bool on_quit(const quit_event&) { 
+    return is_running = false; 
   }
 
-  bool on_resized(const resized_event& e) { 
-    FUSE_INFO("window resized %d %d", e.width, e.height)
-    return true;
-  }
-
-  void start_application() {
-    app_configuration config;
-
-    // init sdl systems
+  FUSE_API void run_application(const app_config& config) {
+    // init SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-      FUSE_ERROR("SDL_Init failed: %s", SDL_GetError());
+      FUSE_ERROR("%s", SDL_GetError());
       exit(EXIT_FAILURE);
+    }
+    // init SDL_image
+    if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG) < 0) {
+      FUSE_ERROR("%s", IMG_GetError());
+    }
+    // init SDL_ttf
+    if(TTF_Init() < 0) { 
+      FUSE_ERROR("%s", TTF_GetError());         
+    }
+    // init SDL_mixer
+    if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG) < 0 || 
+      Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 512)) {
+      FUSE_ERROR("%s", Mix_GetError());
     }
 
     // create window
     auto w_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window *window = SDL_CreateWindow(config.name, config.start_x, config.start_y, config.width, config.height, w_flags);
-    if (!window) {
-      FUSE_ERROR("SDL_CreateWindow failed: %s", SDL_GetError());
-      exit(EXIT_FAILURE);
-    }
+    SDL_Window* window = SDL_CreateWindow(config.title.c_str(), SDL_WINDOWPOS_CENTERED, 
+    SDL_WINDOWPOS_CENTERED, config.width, config.height, w_flags);
 
-    // create renderer context
+    // create renderer 
     auto r_flags = (SDL_RendererFlags)(SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, r_flags);
-    if (!renderer) {
-      FUSE_ERROR("SDL_CreateRenderer failed: %s", SDL_GetError());
+    auto renderer = SDL_CreateRenderer(window, -1, r_flags);
+    if (!window || !renderer) {
+      FUSE_ERROR("%s", SDL_GetError());
       exit(EXIT_FAILURE);
     }
-
-    // register callbacks
-    auto disp = inputs::get_dispatcher();
-    disp->add_callback<resized_event>(on_resized);
-    disp->add_callback<quit_event>(on_quit);
+    
+    vec2f a(1.0f);
+    vec2i b(2,4);
+    
+    inputs::initialize(window);
+    inputs::get_dispatcher()->add_callback<quit_event>(on_quit);
 
     while (is_running) { 
-      inputs::process_sdl_inputs(); 
-    }
+      if(inputs::is_button(SDL_BUTTON_LEFT)) {
+        auto mouse = inputs::mouse_offset();
+        FUSE_INFO("(%f, %f)", mouse.x, mouse.y);
+      }
+      inputs::dispatch_events();
+      SDL_RenderClear(renderer);
+      SDL_RenderPresent(renderer);
+}
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    IMG_Quit();
+    Mix_Quit();
+    TTF_Quit();
     SDL_Quit();
   }
 }

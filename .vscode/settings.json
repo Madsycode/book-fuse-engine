@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "system_error": "cpp",
+    "vector": "cpp",
+    "memory": "cpp"
+  }
+}

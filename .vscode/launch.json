@@ -1,22 +1,22 @@
 {
-    "version": "0.2.0",
-    "configurations": [                
-        {
-            "name": "Windows",
-            "type": "cppvsdbg",
-            "request": "launch",            
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/build/bin/Debug",
-            "program": "${workspaceFolder}/build/bin/Debug/game.exe"
-        },
-        {
-            "name": "Linux",
-            "type": "cppdbg",
-            "request": "launch",     
-            "console": "integratedTerminal",
-            "miDebuggerPath": "/usr/bin/gdb",       
-            "cwd": "${workspaceFolder}/build/bin",
-            "program": "${workspaceFolder}/build/bin/game"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Windows",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/build/bin/Debug",
+      "program": "${workspaceFolder}/build/bin/Debug/game.exe"
+    },
+    {
+      "name": "Linux",
+      "type": "cppdbg",
+      "request": "launch",
+      "console": "integratedTerminal",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "cwd": "${workspaceFolder}/build/bin",
+      "program": "${workspaceFolder}/build/bin/game"
+    }
+  ]
 }

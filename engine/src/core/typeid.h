@@ -1,12 +1,14 @@
 #pragma once 
 
 namespace fuse {
-    using type_id = unsigned int;	
-    type_id get_unique_typeid();
+  FUSE_INLINE const uint32_t get_unique_typeid() { 
+    static uint32_t type = 1u;
+    return type++; 
+  }
 
 	template<typename T>
-	FUSE_INLINE type_id get_typeid() {
-		static const type_id s_typeid = get_unique_typeid();
-		return s_typeid;
+	FUSE_INLINE const uint32_t type_id() {
+		static const uint32_t type = get_unique_typeid();
+		return type;
 	}
 }

@@ -3,22 +3,23 @@
 
 namespace fuse::ecs {
   struct sprite_renderer_system : system {
-    FUSE_INLINE void update(float dt) {
-      for (auto &entity : _registry->view<sprite_component>()) {
-        auto& tr = _registry->get_component<transform_component>(entity).transform;
-        auto& id = _registry->get_component<sprite_component>(entity).sprite;
+    FUSE_INLINE void update(float) {
+      for (auto& e : view<sprite_component>()) {
+        // get components
+        auto& tr = e.get_component<transform_component>();
+        auto& sp = e.get_component<sprite_component>();
 
-        // get texture from asset_registry
-        auto& sprite = _assets->get<texture_asset>(id)->texture;
+        // get texture from asset registry
+        auto& sprite = _assets->get<texture_asset>(sp.sprite)->instance;
 
-        SDL_Rect dst_rect{
-          (int)(tr.translate.x),
-          (int)(tr.translate.y),
-          (int)(sprite.width * tr.scale.x),
-          (int)(sprite.height * tr.scale.y)};
+        // define target viewport
+        SDL_FRect dst{ 
+          tr.translate.x, tr.translate.y,
+          sprite.width * tr.scale.x, sprite.height * tr.scale.y
+        };
 
         // render sprite        
-        SDL_RenderCopyEx(_renderer, sprite.data, NULL, &dst_rect, tr.rotation, NULL, sprite.flip);
+        SDL_RenderCopyExF(_renderer, sprite.data, NULL, &dst, tr.rotation, NULL, sp.flip);
       }
     }
   };

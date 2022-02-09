@@ -3,17 +3,25 @@
 
 namespace fuse::ecs {
   struct script_system : system {
+    FUSE_INLINE ~script_system() {
+      for (auto& e: view<script_component>()) {
+        auto& script = e.get_component<script_component>();
+        FUSE_DELETE(script.instance);
+      }
+    }
+
     FUSE_INLINE void start() {
-      for (auto& e : _registry->view<script_component>()) {
-        auto& script = _registry->get_component<script_component>(e);
-        script.instantiate(ecs::entity(e, _registry), _assets);
-        script.script->on_start();
+      for (auto& e : view<script_component>()) {
+        auto& script = e.get_component<script_component>();
+        script_props props(e, _registry, _assets);
+        script.instance = script.instantiate(props);
+        script.instance->on_start();
       }
     }
 
     FUSE_INLINE void update(float dt) {
-      for (auto& entity : _registry->view<script_component>()) {
-        _registry->get_component<script_component>(entity).script->on_update(dt);
+      for (auto& e : view<script_component>()) {
+        e.get_component<script_component>().instance->on_update(dt);
       }
     }
   };

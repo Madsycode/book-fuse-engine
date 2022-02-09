@@ -3,7 +3,7 @@
     {
       "name": "configs",
       "includePath": [
-        "${workspaceFolder}/dependencies/includes/**",
+        "${workspaceFolder}/windows/includes/**",
         "${workspaceFolder}/engine/src/**"
       ],
       "defines": ["_DEBUG", "FUSE_EXPORT"],

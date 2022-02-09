@@ -1,5 +1,5 @@
 #pragma once
-#include "scripts/fuse_script.h"
+#include "scripts/script_instance.h"
 
 namespace fuse::ecs {
   struct script_component {
@@ -8,13 +8,21 @@ namespace fuse::ecs {
 
     template<typename T>
     FUSE_INLINE void bind() { 
-      instantiate = [&](auto entiy, auto assets) { 
-        script = std::make_shared<T>();         
-        script->init(entiy, assets);
+      instantiate = [](const script_props& props) { 
+        auto script = static_cast<script_instance*>(new T());         
+        script->init(props);
+        return script;
       };    
     }   
 
-    std::function<void(const entity&, asset_registry*)> instantiate;
-    std::shared_ptr<fuse_script> script;
+    script_instance* instance = NULL;
+    script_instantiator instantiate;
+    std::string name;
+  };
+
+  struct audio_component {
+    FUSE_INLINE audio_component(const audio_component&) = default;
+    FUSE_INLINE audio_component() = default;
+    asset_id audio;
   };
 }

@@ -1,6 +1,7 @@
 {
-  "files.associations": {
-    "xiosbase": "cpp",
-    "functional": "cpp"
-  }
+    "files.associations": {
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "vector": "cpp"
+    }
 }

@@ -1,26 +1,19 @@
 #pragma once
-#include "asset_instance.h"
+#include "asset.h"
 
 namespace fuse {
-  struct font_instance {
-    TTF_Font *data = NULL;
-    int size = 16;
+  struct font {
+    TTF_Font* data = NULL;
+    std::string filename;
+    int size = 20;
   };
 
-  struct font_asset : asset_instance {
-    FUSE_INLINE font_asset(const std::string& path, const std::string& name, const font_instance& data) {
-      this->id = generate_uuid();
-      this->font = data;
-      this->name = name;
-      this->path = path;
-    }
-
+  struct font_asset : asset {
     FUSE_INLINE font_asset() = default;
-
     FUSE_INLINE ~font_asset() {
-      TTF_CloseFont(font.data);
+      TTF_CloseFont(instance.data);
     }
 
-    font_instance font;
+    font instance;
   };
 }

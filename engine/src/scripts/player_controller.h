@@ -1,11 +1,8 @@
 #pragma once
-#include "fuse_script.h"
+#include "script_instance.h"
 
 namespace fuse {
-  struct player_controller : fuse_script {
-    FUSE_INLINE void on_create() { 
-      FUSE_INFO("player_script created!");
-    }
+  struct player_controller : script_instance {
 
     FUSE_INLINE void on_start() { 
       FUSE_INFO("player_script started!");
@@ -16,25 +13,23 @@ namespace fuse {
     }
 
     FUSE_INLINE void on_update(float dt) { 
-      float speed = 300.0f;
-      auto& tr = get_component<ecs::transform_component>().transform;
+      auto& t = get_component<ecs::transform_component>();    
 
-      // move left
-      if(inputs::is_pressed(SDL_SCANCODE_A)) {
-        tr.translate.x -= (speed * dt);
+      if(inputs::is_key(SDL_SCANCODE_A)) { // move left
+        t.translate.x -= (speed * dt);
       }
-      // move right
-      if(inputs::is_pressed(SDL_SCANCODE_D)) {
-        tr.translate.x += (speed * dt);
+      if(inputs::is_key(SDL_SCANCODE_D)) { // move right
+        t.translate.x += (speed * dt);
       }
-      // move up
-      if(inputs::is_pressed(SDL_SCANCODE_W)) {
-        tr.translate.y -= (speed * dt);
+      if(inputs::is_key(SDL_SCANCODE_W)) { // move up
+        t.translate.y -= (speed * dt);
       }
-      // move down
-      if(inputs::is_pressed(SDL_SCANCODE_S)) {
-        tr.translate.y += (speed * dt);
+      if(inputs::is_key(SDL_SCANCODE_S)) { // move down
+        t.translate.y += (speed * dt);
       }      
     }
+
+  private:
+    float speed = 300.0f;
   };
 }

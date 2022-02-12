@@ -1,14 +1,20 @@
 #pragma once
 #include "math/vec2.h"
-#include "core/dispatcher.h"
+#include "dispatcher.h"
 
 namespace fuse::inputs {
-    FUSE_API vec2i mouse_wheel();
-    FUSE_API vec2i mouse_position();
+  struct mouse_state {
+    std::bitset<7> buttons = {0};
+    vec2f offset;
+    vec2f wheel;
+  };
 
-    FUSE_API bool is_pressed(int key);
-    FUSE_API bool is_down(int button);
+  FUSE_API const vec2f& mouse_offset();
+  FUSE_API const vec2f& mouse_wheel();
+  FUSE_API bool is_button(int);
 
-    FUSE_API dispatcher* get_dispatcher();
-    FUSE_API void process_events();
+  FUSE_API void initialize(SDL_Window*);
+  FUSE_API dispatcher* get_dispatcher();
+  FUSE_API void dispatch_events();
+  FUSE_API bool is_key(int);
 }

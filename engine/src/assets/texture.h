@@ -1,27 +1,21 @@
 #pragma once
-#include "asset_instance.h"
+#include "asset.h"
 
 namespace fuse {
-  struct texture_instance {    
-    SDL_Texture *data = NULL;
+  struct texture {    
+    SDL_Texture* data = NULL;
+    std::string filename;
     int height = 0;
     int width = 0;
   };
 
-  struct texture_asset : asset_instance {
-    FUSE_INLINE texture_asset(const std::string& path, const std::string& name, const texture_instance& data) {
-      this->id = generate_uuid();
-      this->texture = data;
-      this->name = name;
-      this->path = path;
-    }
-
+  struct texture_asset : asset {
     FUSE_INLINE texture_asset() = default;
 
     FUSE_INLINE ~texture_asset() { 
-      SDL_DestroyTexture(texture.data);
+      SDL_DestroyTexture(instance.data);
     }
 
-    texture_instance texture;
+    texture instance;
   };
 }

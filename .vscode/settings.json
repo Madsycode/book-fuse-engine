@@ -1,13 +1,7 @@
 {
-  "files.associations": {
-    "xiosbase": "cpp",
-    "functional": "cpp",
-    "xtree": "cpp",
-    "xhash": "cpp",
-    "vector": "cpp",
-    "algorithm": "cpp",
-    "xstring": "cpp",
-    "xutility": "cpp",
-    "set": "cpp"
-  }
+    "files.associations": {
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "vector": "cpp"
+    }
 }

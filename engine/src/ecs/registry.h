@@ -8,31 +8,31 @@ namespace fuse::ecs {
       for (auto& [_, a] : _components) { FUSE_DELETE(a); }
       _components.clear();
       _signatures.clear();
+      _nextid = INVALID_ID;
     }
 
-    FUSE_INLINE entity_id add_entity() {
-      static entity_id _nextid = INVALID_ID;
-      _nextid++;
-      _signatures[_nextid] = signature();
-      return _nextid;
+    FUSE_INLINE entityid add_entity() {
+      entityid entity = (++_nextid);
+      _signatures[entity] = signature();
+      return entity;
     }
 
-    FUSE_INLINE void destroy(entity_id entity) {
+    FUSE_INLINE void destroy(entityid e) {
       for (auto& [_, a] : _components) {
-        a->erase(entity);
+        a->erase(e);
       }
-      _signatures.erase(entity);
+      _signatures.erase(e);
     }
 
-    FUSE_INLINE bool is_alive(entity_id entity) {
-			return _signatures.count(entity);
+    FUSE_INLINE bool is_alive(entityid e) {
+			return _signatures.count(e);
 		}
 
     template <typename T>
-    FUSE_INLINE entity_list view() {
-      entity_list list;
+    FUSE_INLINE entitylist view() {
+      entitylist list;
       for (auto& [entity, sig] : _signatures) {
-        if (sig.count(get_typeid<T>())) {
+        if (sig.count(type_id<T>())) {
           list.insert(entity);
           continue;
         }
@@ -41,45 +41,46 @@ namespace fuse::ecs {
     }
 
     template <typename T>
-    FUSE_INLINE T& get_component(entity_id entity) {
-      FUSE_ASSERT(_signatures.count(entity) && "out of range!");
-      return get_component_array<T>()->get(entity);
+    FUSE_INLINE T& get_component(entityid e) {
+      FUSE_ASSERT(_signatures.count(e) && "out of range!");
+      return get_component_array<T>()->get(e);
     }
 
     template <typename T, typename... Args>
-    FUSE_INLINE T &add_component(entity_id entity, Args&&...args) {
-      FUSE_ASSERT(_signatures.count(entity) && "out of range!");
+    FUSE_INLINE T &add_component(entityid e, Args&&...args) {
+      FUSE_ASSERT(_signatures.count(e) && "out of range!");
       auto data = T(std::forward<Args>(args)...);
-      _signatures[entity].insert(get_typeid<T>());
-      return get_component_array<T>()->push(entity, data);
+      _signatures[e].insert(type_id<T>());
+      return get_component_array<T>()->push(e, data);
     }
 
     template <typename T>
-    FUSE_INLINE void remove_component(entity_id entity) {
-      _signatures.at(entity).erase(get_typeid<T>());
-      get_component_array<T>()->erase(entity);
+    FUSE_INLINE void remove_component(entityid e) {
+      _signatures.at(e).erase(type_id<T>());
+      get_component_array<T>()->erase(e);
     }
 
     template <typename T>
-    FUSE_INLINE bool has_component(entity_id entity) {
-      return _signatures.count(entity) && _signatures.at(entity).count(get_typeid<T>());
+    FUSE_INLINE bool has_component(entityid e) {
+      return _signatures.count(e) && _signatures.at(e).count(type_id<T>());
     }
 
     // ++
 
     template <typename T>
     FUSE_INLINE component_array<T>* get_component_array() {
-      const type_id type = get_typeid<T>();
+      componentid type = type_id<T>();
       if(_components.count(type)) {
         return static_cast<component_array<T>*>(_components.at(type));
       }
       auto array = new component_array<T>();
-      _components[get_typeid<T>()] = array;
+      _components[type] = array;
       return array;
     }
 
   private:
-    std::unordered_map<type_id, array_instance*> _components;
-    std::unordered_map<entity_id, signature> _signatures;
+    std::unordered_map<componentid, array_instance*> _components;
+    std::unordered_map<entityid, signature> _signatures;
+    entityid _nextid = INVALID_ID;
   };
 }

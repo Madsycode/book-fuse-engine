@@ -4,27 +4,22 @@
 namespace fuse::ecs {
   struct sprite_renderer_system : system {
     FUSE_INLINE void update(float) {
-      for (auto &entity : _registry->view<sprite_component>()) {
-        auto& tr = _registry->get_component<transform_component>(entity).transform;
-        auto& sp = _registry->get_component<sprite_component>(entity);
+      for (auto& e : view<sprite_component>()) {
+        // get components
+        auto& tr = e.get_component<transform_component>();
+        auto& sp = e.get_component<sprite_component>();
 
-        // get texture from asset_registry
+        // get texture from asset registry
         auto& sprite = _assets->get<texture_asset>(sp.sprite)->instance;
 
-        SDL_FRect dst_rect{
+        // define target viewport
+        SDL_FRect dst{ 
           tr.translate.x, tr.translate.y,
-          sprite.width * tr.scale.x, 
-          sprite.height * tr.scale.y
-        };
-
-        // center of object
-        const SDL_FPoint center = { 
-          tr.translate.x + dst_rect.w/2.0f,
-          tr.translate.y + dst_rect.h/2.0f
+          sprite.width * tr.scale.x, sprite.height * tr.scale.y
         };
 
         // render sprite        
-        SDL_RenderCopyExF(_renderer, sprite.data, NULL, &dst_rect, tr.rotation, &center, sp.flip);
+        SDL_RenderCopyExF(_renderer, sprite.data, NULL, &dst, tr.rotation, NULL, sp.flip);
       }
     }
   };

@@ -6,11 +6,6 @@ namespace fuse {
     FUSE_INLINE quit_event() = default;
   };
 
-  struct resized_event : event_instance {
-    FUSE_INLINE resized_event(int w, int h): width(w), height(h){}
-    int width, height;
-  };
-
   struct keydown_event : event_instance {
     FUSE_INLINE keydown_event(int key) : key(key) {}
     int key;

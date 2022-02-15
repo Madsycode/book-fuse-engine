@@ -15,4 +15,10 @@ namespace fuse::ecs {
     SDL_FRect collider = { 0.0f, 0.0f, 64.0f, 64.0f };   
     bool disabled = false;  
   };
+
+  struct tag_component {
+    FUSE_INLINE tag_component(const tag_component&) = default;
+    FUSE_INLINE tag_component() = default;
+    std::string tag;
+  };
 }

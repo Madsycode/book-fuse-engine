@@ -8,13 +8,7 @@ namespace fuse {
   };
 
   struct animation_asset : asset {
-    FUSE_INLINE animation_asset(const std::string& name, const animation& data) {
-      this->instance = data;
-      this->name = name;
-    }
-
     FUSE_INLINE animation_asset() = default;
-
     animation instance;
   }; 
 }

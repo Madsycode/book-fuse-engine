@@ -5,6 +5,7 @@ namespace fuse::ecs {
   struct sprite_component {
     FUSE_INLINE sprite_component(const sprite_component&) = default;
     FUSE_INLINE sprite_component() = default;
+    
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     asset_id sprite = INVALID_ID;
   };
@@ -12,8 +13,9 @@ namespace fuse::ecs {
   struct text_component {
     FUSE_INLINE text_component(const text_component&) = default;
     FUSE_INLINE text_component() = default;
-    SDL_Color color = { 255, 255, 255, 255 };
+
     SDL_RendererFlip flip = SDL_FLIP_NONE;
+    SDL_Color color = { 0, 0, 0, 255 };
     asset_id font = INVALID_ID;
     std::string text;
   };

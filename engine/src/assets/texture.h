@@ -3,18 +3,13 @@
 
 namespace fuse {
   struct texture {    
-    SDL_Texture *data = NULL;
+    SDL_Texture* data = NULL;
     std::string filename;
     int height = 0;
     int width = 0;
   };
 
   struct texture_asset : asset {
-    FUSE_INLINE texture_asset(const std::string& name, const texture& data) {
-      this->instance = data;
-      this->name = name;
-    }
-
     FUSE_INLINE texture_asset() = default;
 
     FUSE_INLINE ~texture_asset() { 

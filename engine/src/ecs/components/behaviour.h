@@ -19,10 +19,4 @@ namespace fuse::ecs {
     script_instantiator instantiate;
     std::string name;
   };
-
-  struct audio_component {
-    FUSE_INLINE audio_component(const audio_component&) = default;
-    FUSE_INLINE audio_component() = default;
-    asset_id audio;
-  };
 }

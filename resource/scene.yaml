@@ -1,0 +1,116 @@
+assets:
+  - texture:
+      id: 11090936700073028073
+      name: dead
+      source: assets/dead.png
+  - texture:
+      id: 4438841964880051603
+      name: fly
+      source: assets/fly.png
+  - texture:
+      id: 17486695440798850061
+      name: pipe
+      source: assets/pipe.png
+  - texture:
+      id: 13713138654300373170
+      name: ground
+      source: assets/ground.png
+  - texture:
+      id: 6626746855486709324
+      name: bg
+      source: assets/bg.png
+  - audio:
+      id: 15267576567934566986
+      name: music
+      source: assets/song.mp3
+  - audio:
+      id: 1369198478026822423
+      name: boom
+      source: assets/boom.wav
+  - font:
+      id: 4473090289477284646
+      name: font
+      size: 30
+      source: assets/font.ttf
+entities:
+  - info_component:
+      uuid: 6924153169562655247
+      name: background
+      tag: default
+    transform_component:
+      translate: [0, 0]
+      rotation: 0
+      scale: [1, 1]
+    sprite_component:
+      sprite: 6626746855486709324
+      flip: 0
+  - info_component:
+      uuid: 581970498066137118
+      name: ground
+      tag: default
+    transform_component:
+      translate: [0, 620]
+      rotation: 0
+      scale: [1, 1]
+    rigidbody_component:
+      gravity: 0
+      velocity: [-100, 0]
+      disabled: false
+      force: [0, 0]
+    collider_component:
+      width: 711
+      height: 265
+      disabled: false
+    sprite_component:
+      sprite: 13713138654300373170
+      flip: 0
+    script_component:
+      name: scrolling_ground
+  - info_component:
+      uuid: 14013787564835582715
+      name: player
+      tag: default
+    transform_component:
+      translate: [126, 360]
+      rotation: 0
+      scale: [0.5, 0.5]
+    rigidbody_component:
+      gravity: 25
+      velocity: [0, 0]
+      disabled: false
+      force: [0, 0]
+    collider_component:
+      width: 58
+      height: 38
+      disabled: false
+    sprite_component:
+      sprite: 4438841964880051603
+      flip: 0
+    script_component:
+      name: player_controller
+  - info_component:
+      uuid: 7338158845527718811
+      name: game
+      tag: default
+    transform_component:
+      translate: [0, 0]
+      rotation: 0
+      scale: [1, 1]
+    script_component:
+      name: pipe_spawner
+  - info_component:
+      uuid: 5612824622172931473
+      name: score
+      tag: default
+    transform_component:
+      translate: [120, 20]
+      rotation: 0
+      scale: [1, 1]
+    text_component:
+      R: 0
+      G: 0
+      B: 0
+      A: 255
+      text: "Score: 0"
+      font: 4473090289477284646
+      flip: 0

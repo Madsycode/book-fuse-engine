@@ -14,13 +14,3 @@ rem compile project
 cd build && cmake --build . 
 
 echo compilation finished!
-
-
-rem create output directory
-mkdir build 
-
-rem generate cmake file
-cmake -O . -B ./build -DBUILD_SHARED_LIBS=ON
-
-rem compile library
-cmake –-build ./build

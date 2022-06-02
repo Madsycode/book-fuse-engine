@@ -43,7 +43,7 @@ FUSE_INLINE void start() {
   tm->instance.tilesize = 64;
 
   // add tilemap entity
-  auto& tilemap = add_entity("tilemap");
+  ecs::entity tilemap = add_entity("tilemap");
   tilemap.add_component<tilemap_component>().tilemap = tm->id;
 
   // turn image into multiple entities with tiles
